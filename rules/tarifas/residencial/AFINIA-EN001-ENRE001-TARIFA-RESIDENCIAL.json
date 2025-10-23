@@ -1,0 +1,808 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "id": "2b515e01-3cc5-46bf-b547-03c1039826ec",
+      "name": "request",
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "position": {
+        "x": -1395,
+        "y": 630
+      }
+    },
+    {
+      "id": "b33d7dd0-1986-477c-b34b-e8b3abb6c03e",
+      "name": "Valida Tarifa",
+      "type": "decisionTableNode",
+      "content": {
+        "rules": [
+          {
+            "_id": "92a6f478-6581-4c9f-8f9c-30262f1ae61d",
+            "_description": "",
+            "4b183eef-36f0-4508-a574-b50a15bbabe0": "'1'",
+            "9abeaf00-8dea-46e2-a629-42e69d12c24c": "'Estrato_1'"
+          },
+          {
+            "_id": "d38921a2-b5e1-40ea-af2f-9ab3b70c5433",
+            "_description": "",
+            "4b183eef-36f0-4508-a574-b50a15bbabe0": "'2'",
+            "9abeaf00-8dea-46e2-a629-42e69d12c24c": "'Estrato_2'"
+          },
+          {
+            "_id": "da8871fc-ab88-41c4-b0c6-2ddfbfd8e087",
+            "_description": "",
+            "4b183eef-36f0-4508-a574-b50a15bbabe0": "'3'",
+            "9abeaf00-8dea-46e2-a629-42e69d12c24c": "'Estrato_3'"
+          },
+          {
+            "_id": "2329015d-f685-4763-89d0-d00691dc230a",
+            "_description": "",
+            "4b183eef-36f0-4508-a574-b50a15bbabe0": "'4'",
+            "9abeaf00-8dea-46e2-a629-42e69d12c24c": "'Estrato_4'"
+          },
+          {
+            "_id": "ff1a5eb9-d96e-492e-a942-7b0438b19945",
+            "_description": "",
+            "4b183eef-36f0-4508-a574-b50a15bbabe0": "'5'",
+            "9abeaf00-8dea-46e2-a629-42e69d12c24c": "'Estrato_5'"
+          },
+          {
+            "_id": "f151d1f4-48f3-4c7d-a65c-c05c8b4a8afb",
+            "_description": "",
+            "4b183eef-36f0-4508-a574-b50a15bbabe0": "'6'",
+            "9abeaf00-8dea-46e2-a629-42e69d12c24c": "'Estrato_6'"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "4b183eef-36f0-4508-a574-b50a15bbabe0",
+            "name": "estrato socioeconómico ",
+            "field": "tsl_wo_work_order_attribute.stratum"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "9abeaf00-8dea-46e2-a629-42e69d12c24c",
+            "name": "Output",
+            "field": "estrato"
+          }
+        ],
+        "hitPolicy": "first",
+        "inputField": null,
+        "outputPath": null,
+        "passThrough": true,
+        "executionMode": "single"
+      },
+      "position": {
+        "x": 1170,
+        "y": 825
+      }
+    },
+    {
+      "id": "2a4d5540-13db-4ed5-81b5-c7e1fe4137c7",
+      "name": "Tarifa?",
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "58549f21-32de-44c2-b393-90b3809f2ef1",
+            "condition": "estrato == 'Estrato_1'",
+            "isDefault": false
+          },
+          {
+            "id": "d0866297-0020-414e-90ec-8c1df31bc3f4",
+            "condition": "estrato == 'Estrato_2'",
+            "isDefault": false
+          },
+          {
+            "id": "3f5bb6a3-29f3-4c80-a3df-4bb0c7785761",
+            "condition": "estrato == 'Estrato_3'",
+            "isDefault": false
+          },
+          {
+            "id": "267268f4-dcd5-4495-aa6d-a9dccd3b9794",
+            "condition": "estrato == 'Estrato_4'",
+            "isDefault": false
+          },
+          {
+            "id": "4eb75645-d9ba-4fa0-b6fd-f30e73a9d9b3",
+            "condition": "estrato == 'Estrato_5'",
+            "isDefault": false
+          },
+          {
+            "id": "5b1e193f-c978-4a79-afe1-d25ccfa95c1e",
+            "condition": "estrato == 'Estrato_6'",
+            "isDefault": false
+          }
+        ]
+      },
+      "position": {
+        "x": 1450,
+        "y": 825
+      }
+    },
+    {
+      "id": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "name": "Subsidio",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"subsidio\",\n    billing_item_description: \"Subsido\",\n    print_description: \"Subsidio\",\n    print_order: 59,\n    calculation_order: 59,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 1810,
+        "y": 925
+      }
+    },
+    {
+      "id": "3fb80f51-8edd-4891-9f6b-705d0d565f3c",
+      "name": "Madre Comunitaria?",
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "acf86db1-8e52-4c8e-9851-d5601a22f4c8",
+            "condition": "madres_comunitarias",
+            "isDefault": false
+          },
+          {
+            "id": "6b2609a0-3776-4313-8864-ac5bacce383d",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "position": {
+        "x": 2120,
+        "y": 830
+      }
+    },
+    {
+      "id": "bf9a1a56-f068-4639-9d7d-39c86aff8d29",
+      "name": "Madres Comunitarias",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"madres_comunitarias\",\n    billing_item_description: \"Acuerdo de madres comunitarias\",\n    print_description: \"Acuerdo de madres comunitarias\",\n    print_order: 108,\n    calculation_order: 108,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 2400,
+        "y": 865
+      }
+    },
+    {
+      "id": "f01ce45c-343b-4ff6-99f2-af36ebecc857",
+      "name": "Consumo",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",           \n    billing_item_code: \"consumo\",\n    billing_item_description: \"Consumo de energia activa\",\n    print_description: \"Consumo de energia activa\",\n    print_order: 1,\n    calculation_order: 1,\n    print_grouping: null,\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 585,
+        "y": 820
+      }
+    },
+    {
+      "id": "ff425641-7812-444d-9356-b17dabadb331",
+      "name": "Contribucion",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion\",\n    billing_item_description: \"Contribucion por energia activa\",\n    print_description: \"Contribucion por energia activa\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 2080,
+        "y": 1345
+      }
+    },
+    {
+      "id": "81af091f-b305-45cf-a244-7289269f5994",
+      "name": "Consumo Punta",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",           \n    billing_item_code: \"consumo_punta\",\n    billing_item_description: \"Consumo de energia activa punta\",\n    print_description: \"Consumo de energia activa punta\",\n    print_order: 2,\n    calculation_order: 2,\n    print_grouping: null,\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 320,
+        "y": 665
+      }
+    },
+    {
+      "id": "38fbdf94-e51d-4335-91f0-e4c56bd029cf",
+      "name": "Consumo valle",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",          \n    billing_item_code: \"consumo_valle\",\n    billing_item_description: \"Consumo de energia activa valle\",\n    print_description: \"Consumo de energia activa valle\",\n    print_order: 3,\n    calculation_order: 3,\n    print_grouping: null,\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 570,
+        "y": 665
+      }
+    },
+    {
+      "id": "c13cb691-dd54-40ab-a421-57b0a632d1d3",
+      "name": "Contribucion valle",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_valle\",\n    billing_item_description: \"Contribucion por energia activa valle\",\n    print_description: \"Contribucion por energia activa valle\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 2350,
+        "y": 1185
+      }
+    },
+    {
+      "id": "de53fc61-7439-46ca-9fc6-a67f82ca4dc7",
+      "name": "Contribucion punta",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_punta\",\n    billing_item_description: \"Contribucion por energia activa punta\",\n    print_description: \"Contribucion por energia activa punta\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 2070,
+        "y": 1185
+      }
+    },
+    {
+      "id": "0db4f2fc-38e1-4656-ab87-06400c063638",
+      "name": "Telemedido?",
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "30c7d051-c212-4131-b342-763122924f3a",
+            "condition": "telemedido",
+            "isDefault": false
+          },
+          {
+            "id": "313f68e2-d050-486f-8552-8500934d51e7",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "position": {
+        "x": -5,
+        "y": 630
+      }
+    },
+    {
+      "id": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "name": "Telemedido?",
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "ed4f9672-db97-461c-bac3-179b4e61194c",
+            "condition": "telemedido",
+            "isDefault": false
+          },
+          {
+            "id": "3e943c00-cbaf-48cf-b6b6-41d89259e3c9",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "position": {
+        "x": 1810,
+        "y": 1150
+      }
+    },
+    {
+      "id": "46474a7f-1b0f-47ee-bc96-32daa2e0a8a0",
+      "name": "Consumo llano",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",          \n    billing_item_code: \"consumo_llano\",\n    billing_item_description: \"Consumo de energia activa llano\",\n    print_description: \"Consumo de energia activa llano\",\n    print_order: 3,\n    calculation_order: 3,\n    print_grouping: null,\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 835,
+        "y": 665
+      }
+    },
+    {
+      "id": "a134a00b-a856-46dc-9620-ca5ef4b33b24",
+      "name": "Contribucion llano",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_llano\",\n    billing_item_description: \"Contribucion por energia activa llano\",\n    print_description: \"Contribucion por energia activa llano\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 2625,
+        "y": 1185
+      }
+    },
+    {
+      "id": "eea9b4a8-3d20-4355-83ec-61d44aeb6ca8",
+      "name": "Valida Telemedicion?",
+      "type": "decisionTableNode",
+      "content": {
+        "rules": [
+          {
+            "_id": "7fc70d9f-5602-4333-bd12-c44d5e2c53c0",
+            "_description": "",
+            "7fcc6186-fc90-49ac-90a4-b291f687d8fa": "true",
+            "9141761e-ef28-4270-813d-3aaadc8a49ec": "\"telemedido\""
+          },
+          {
+            "_id": "5c437ee9-12a8-4321-bf56-97af1594fa51",
+            "_description": "",
+            "7fcc6186-fc90-49ac-90a4-b291f687d8fa": "false",
+            "9141761e-ef28-4270-813d-3aaadc8a49ec": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "9141761e-ef28-4270-813d-3aaadc8a49ec",
+            "name": "Tipo de medicion",
+            "field": "tsl_wo_work_order_attribute.measurement_type"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "7fcc6186-fc90-49ac-90a4-b291f687d8fa",
+            "name": "Output",
+            "field": "telemedido"
+          }
+        ],
+        "hitPolicy": "first",
+        "inputField": null,
+        "outputPath": null,
+        "passThrough": true,
+        "executionMode": "single"
+      },
+      "position": {
+        "x": -1120,
+        "y": 630
+      }
+    },
+    {
+      "id": "4cbcafbb-2a58-4dad-8574-43a151aed97a",
+      "name": "Valida madres comunitarias",
+      "type": "decisionTableNode",
+      "content": {
+        "rules": [
+          {
+            "_id": "4e4908b1-b1c4-4739-93fd-41a4a0fc9de1",
+            "_description": "",
+            "44a8fdf7-a96b-4a6c-95bf-6ead19ee7364": "true",
+            "5ef59533-fea2-474b-b6a6-67d80f2ac9a0": "\"true\""
+          },
+          {
+            "_id": "02cc0de4-e160-4071-b52a-fd9a3465a997",
+            "_description": "",
+            "44a8fdf7-a96b-4a6c-95bf-6ead19ee7364": "false",
+            "5ef59533-fea2-474b-b6a6-67d80f2ac9a0": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "5ef59533-fea2-474b-b6a6-67d80f2ac9a0",
+            "name": "es madres comunitarias ?",
+            "field": "tsl_wo_work_order_attribute.is_community_mothers"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "44a8fdf7-a96b-4a6c-95bf-6ead19ee7364",
+            "name": "madres comunitarias",
+            "field": "madres_comunitarias"
+          }
+        ],
+        "hitPolicy": "first",
+        "inputField": null,
+        "outputPath": null,
+        "passThrough": true,
+        "executionMode": "single"
+      },
+      "position": {
+        "x": -845,
+        "y": 630
+      }
+    },
+    {
+      "id": "43f86158-d4f2-440f-b896-5b489315656e",
+      "name": "Alumbrado ?",
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "0ffbe06e-fb6a-49a7-a5d8-b8565b0be592",
+            "condition": "alumbrado_publico",
+            "isDefault": false
+          },
+          {
+            "id": "2709df55-5248-47bf-a590-d25c886d3bff",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "position": {
+        "x": 3125,
+        "y": 1120
+      }
+    },
+    {
+      "id": "1c1beb30-cb29-4df3-a61d-252db619c405",
+      "name": "Alumbrado publico",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.public_lighting_billing_items == null) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"alumbrado_publico\",\n    billing_item_description: \"Tasa de alumbrado publico\",\n    print_description: \"Tasa de alumbrado publico\",\n    print_order: 1,\n    calculation_order: 1,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.public_lighting_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 3410,
+        "y": 1155
+      }
+    },
+    {
+      "id": "7f8d998f-9442-42dd-b137-16ad86d23ba8",
+      "name": "Aseo ?",
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "1a0793db-c366-49ef-bbeb-b2bd855e8eac",
+            "condition": "aseo",
+            "isDefault": false
+          },
+          {
+            "id": "77999019-581e-477f-bd1a-fc510046a9c4",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "position": {
+        "x": 3730,
+        "y": 1225
+      }
+    },
+    {
+      "id": "894302e0-fc4a-4d59-b8c6-fc4d3362e1cd",
+      "name": "Aseo",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: null,\n      cleaning_billing_items: [],\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.cleaning_billing_items == null) {\n    workOrder.billing_items.cleaning_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"aseo\",\n    billing_item_description: \"Aseo\",\n    print_description: \"Aseo\",\n    print_order: 1,\n    calculation_order: 1,\n    print_grouping: null\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.cleaning_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "position": {
+        "x": 4005,
+        "y": 1260
+      }
+    },
+    {
+      "id": "5ba76019-8cd8-40f1-912b-2f560851ae66",
+      "name": "response",
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "position": {
+        "x": 4340,
+        "y": 1330
+      }
+    },
+    {
+      "id": "dbabfdb8-71b0-4446-8ce3-84fde6a10c9e",
+      "name": "valida Alumbrado Publico",
+      "type": "decisionTableNode",
+      "content": {
+        "rules": [
+          {
+            "_id": "c243a593-78af-477a-ba6c-0d8f5a4b27a5",
+            "_description": "",
+            "afccf841-3626-4f12-b7dd-940813798d5c": "'',\"\",\" \",' ',null,\"null\",'null'",
+            "b824079d-ce5c-4b68-802d-73d0b479557d": "false"
+          },
+          {
+            "_id": "b6f410bc-94fb-448e-a9b4-0faf3a2283ff",
+            "_description": "",
+            "afccf841-3626-4f12-b7dd-940813798d5c": "",
+            "b824079d-ce5c-4b68-802d-73d0b479557d": "true"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "afccf841-3626-4f12-b7dd-940813798d5c",
+            "name": "Tiene alumbrado publico ?",
+            "field": "lower(tsl_wo_work_order_attribute.public_lighting_supply_number)"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "b824079d-ce5c-4b68-802d-73d0b479557d",
+            "name": "Output",
+            "field": "alumbrado_publico"
+          }
+        ],
+        "hitPolicy": "first",
+        "inputField": null,
+        "outputPath": null,
+        "passThrough": true,
+        "executionMode": "single"
+      },
+      "position": {
+        "x": -565,
+        "y": 630
+      }
+    },
+    {
+      "id": "d1bf50ee-13cd-486a-9970-21906b82aea8",
+      "name": "Valida Aseo",
+      "type": "decisionTableNode",
+      "content": {
+        "rules": [
+          {
+            "_id": "6c731c35-1641-4100-9d53-a948c6ac1416",
+            "_description": "",
+            "5d42547e-558d-4044-ae7e-b4f5cef96261": "'',\"\",\" \",' ',null,\"null\",'null'",
+            "8f1ddb73-943a-4893-b347-0bb8371b99da": "false"
+          },
+          {
+            "_id": "ef72bf39-c2f4-4836-af57-7ef3c471dfc9",
+            "_description": "",
+            "5d42547e-558d-4044-ae7e-b4f5cef96261": "",
+            "8f1ddb73-943a-4893-b347-0bb8371b99da": "true"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "5d42547e-558d-4044-ae7e-b4f5cef96261",
+            "name": "Tiene aseo ?",
+            "field": "lower(tsl_wo_work_order_attribute.cleaning_supply_number)"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "8f1ddb73-943a-4893-b347-0bb8371b99da",
+            "name": "Output",
+            "field": "aseo"
+          }
+        ],
+        "hitPolicy": "first",
+        "inputField": null,
+        "outputPath": null,
+        "passThrough": true,
+        "executionMode": "single"
+      },
+      "position": {
+        "x": -280,
+        "y": 630
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "13d017d9-195a-46da-9bb9-0188760b1678",
+      "type": "edge",
+      "sourceId": "3fb80f51-8edd-4891-9f6b-705d0d565f3c",
+      "targetId": "bf9a1a56-f068-4639-9d7d-39c86aff8d29",
+      "sourceHandle": "acf86db1-8e52-4c8e-9851-d5601a22f4c8"
+    },
+    {
+      "id": "b7139fe6-3b00-4cc3-aee5-a3d604367345",
+      "type": "edge",
+      "sourceId": "81af091f-b305-45cf-a244-7289269f5994",
+      "targetId": "38fbdf94-e51d-4335-91f0-e4c56bd029cf"
+    },
+    {
+      "id": "c96ffd1c-efa0-4d14-9639-ae8e3e13fd56",
+      "type": "edge",
+      "sourceId": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "targetId": "de53fc61-7439-46ca-9fc6-a67f82ca4dc7",
+      "sourceHandle": "ed4f9672-db97-461c-bac3-179b4e61194c"
+    },
+    {
+      "id": "5ed71cc9-27be-4e4b-84cf-79ccff7f5491",
+      "type": "edge",
+      "sourceId": "de53fc61-7439-46ca-9fc6-a67f82ca4dc7",
+      "targetId": "c13cb691-dd54-40ab-a421-57b0a632d1d3"
+    },
+    {
+      "id": "382454bf-9445-47ed-b75a-90979616b20a",
+      "type": "edge",
+      "sourceId": "0db4f2fc-38e1-4656-ab87-06400c063638",
+      "targetId": "f01ce45c-343b-4ff6-99f2-af36ebecc857",
+      "sourceHandle": "313f68e2-d050-486f-8552-8500934d51e7"
+    },
+    {
+      "id": "a3ac8b43-a746-47cf-a614-12c219b6a70d",
+      "type": "edge",
+      "sourceId": "f01ce45c-343b-4ff6-99f2-af36ebecc857",
+      "targetId": "b33d7dd0-1986-477c-b34b-e8b3abb6c03e"
+    },
+    {
+      "id": "40532a32-736d-41ee-947d-24dc345fd454",
+      "type": "edge",
+      "sourceId": "b33d7dd0-1986-477c-b34b-e8b3abb6c03e",
+      "targetId": "2a4d5540-13db-4ed5-81b5-c7e1fe4137c7"
+    },
+    {
+      "id": "fdfa9636-cd91-496f-bfd6-073845f1b2b5",
+      "type": "edge",
+      "sourceId": "2a4d5540-13db-4ed5-81b5-c7e1fe4137c7",
+      "targetId": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "sourceHandle": "58549f21-32de-44c2-b393-90b3809f2ef1"
+    },
+    {
+      "id": "a69708e6-5835-436e-ba8c-15fc085f1505",
+      "type": "edge",
+      "sourceId": "2a4d5540-13db-4ed5-81b5-c7e1fe4137c7",
+      "targetId": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "sourceHandle": "d0866297-0020-414e-90ec-8c1df31bc3f4"
+    },
+    {
+      "id": "130a0da3-54b2-472a-8e16-284410f140b1",
+      "type": "edge",
+      "sourceId": "2a4d5540-13db-4ed5-81b5-c7e1fe4137c7",
+      "targetId": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "sourceHandle": "3f5bb6a3-29f3-4c80-a3df-4bb0c7785761"
+    },
+    {
+      "id": "55cded0b-8e2d-4fb7-8e98-40fcc7b1845c",
+      "type": "edge",
+      "sourceId": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "targetId": "3fb80f51-8edd-4891-9f6b-705d0d565f3c"
+    },
+    {
+      "id": "e90f4f7b-ba5f-44c5-afb5-1c67db0fc097",
+      "type": "edge",
+      "sourceId": "38fbdf94-e51d-4335-91f0-e4c56bd029cf",
+      "targetId": "46474a7f-1b0f-47ee-bc96-32daa2e0a8a0"
+    },
+    {
+      "id": "bfad5e56-225a-493e-b6cb-2c1e42e71aa3",
+      "type": "edge",
+      "sourceId": "c13cb691-dd54-40ab-a421-57b0a632d1d3",
+      "targetId": "a134a00b-a856-46dc-9620-ca5ef4b33b24"
+    },
+    {
+      "id": "f4d836e0-6732-47c0-ac24-ccb964fa25fd",
+      "type": "edge",
+      "sourceId": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "targetId": "ff425641-7812-444d-9356-b17dabadb331",
+      "sourceHandle": "3e943c00-cbaf-48cf-b6b6-41d89259e3c9"
+    },
+    {
+      "id": "29f7d1b9-aa14-4d0a-a118-de4a47012c5a",
+      "type": "edge",
+      "sourceId": "2a4d5540-13db-4ed5-81b5-c7e1fe4137c7",
+      "targetId": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "sourceHandle": "4eb75645-d9ba-4fa0-b6fd-f30e73a9d9b3"
+    },
+    {
+      "id": "210322a8-b745-48d9-b4eb-23274aa66549",
+      "type": "edge",
+      "sourceId": "2a4d5540-13db-4ed5-81b5-c7e1fe4137c7",
+      "targetId": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "sourceHandle": "5b1e193f-c978-4a79-afe1-d25ccfa95c1e"
+    },
+    {
+      "id": "da8a553b-a25c-4e76-a20a-eaef06e90527",
+      "type": "edge",
+      "sourceId": "46474a7f-1b0f-47ee-bc96-32daa2e0a8a0",
+      "targetId": "b33d7dd0-1986-477c-b34b-e8b3abb6c03e"
+    },
+    {
+      "id": "9144fec9-2e76-4b8d-b42d-4f74debc8524",
+      "type": "edge",
+      "sourceId": "2b515e01-3cc5-46bf-b547-03c1039826ec",
+      "targetId": "eea9b4a8-3d20-4355-83ec-61d44aeb6ca8"
+    },
+    {
+      "id": "cb8fca63-1562-4ff3-b2d1-9aeada03b4fa",
+      "type": "edge",
+      "sourceId": "0db4f2fc-38e1-4656-ab87-06400c063638",
+      "targetId": "81af091f-b305-45cf-a244-7289269f5994",
+      "sourceHandle": "30c7d051-c212-4131-b342-763122924f3a"
+    },
+    {
+      "id": "cc844a2f-a153-467c-8bae-859444d7b4fc",
+      "type": "edge",
+      "sourceId": "eea9b4a8-3d20-4355-83ec-61d44aeb6ca8",
+      "targetId": "4cbcafbb-2a58-4dad-8574-43a151aed97a"
+    },
+    {
+      "id": "a1810722-cc6a-4897-b6e9-7f349d1a1783",
+      "type": "edge",
+      "sourceId": "43f86158-d4f2-440f-b896-5b489315656e",
+      "targetId": "1c1beb30-cb29-4df3-a61d-252db619c405",
+      "sourceHandle": "0ffbe06e-fb6a-49a7-a5d8-b8565b0be592"
+    },
+    {
+      "id": "94415e57-c6f4-4c49-a330-4a180576aac2",
+      "type": "edge",
+      "sourceId": "1c1beb30-cb29-4df3-a61d-252db619c405",
+      "targetId": "7f8d998f-9442-42dd-b137-16ad86d23ba8"
+    },
+    {
+      "id": "64a245e9-4e02-4d56-8584-3c05102c876e",
+      "type": "edge",
+      "sourceId": "7f8d998f-9442-42dd-b137-16ad86d23ba8",
+      "targetId": "894302e0-fc4a-4d59-b8c6-fc4d3362e1cd",
+      "sourceHandle": "1a0793db-c366-49ef-bbeb-b2bd855e8eac"
+    },
+    {
+      "id": "eca303bc-13ca-479c-98f7-f33d06a804bc",
+      "type": "edge",
+      "sourceId": "894302e0-fc4a-4d59-b8c6-fc4d3362e1cd",
+      "targetId": "5ba76019-8cd8-40f1-912b-2f560851ae66"
+    },
+    {
+      "id": "4dfc738f-9e78-4a86-ad23-db9e3ffa6cb8",
+      "type": "edge",
+      "sourceId": "43f86158-d4f2-440f-b896-5b489315656e",
+      "targetId": "7f8d998f-9442-42dd-b137-16ad86d23ba8",
+      "sourceHandle": "2709df55-5248-47bf-a590-d25c886d3bff"
+    },
+    {
+      "id": "b4e89e33-9888-4c1c-9dea-7de4523dd49b",
+      "type": "edge",
+      "sourceId": "7f8d998f-9442-42dd-b137-16ad86d23ba8",
+      "targetId": "5ba76019-8cd8-40f1-912b-2f560851ae66",
+      "sourceHandle": "77999019-581e-477f-bd1a-fc510046a9c4"
+    },
+    {
+      "id": "bf2ca500-b49e-4829-a9de-14765149f949",
+      "type": "edge",
+      "sourceId": "bf9a1a56-f068-4639-9d7d-39c86aff8d29",
+      "targetId": "43f86158-d4f2-440f-b896-5b489315656e"
+    },
+    {
+      "id": "b1b42c35-8fdd-49ab-8ae3-85d0034e8af1",
+      "type": "edge",
+      "sourceId": "3fb80f51-8edd-4891-9f6b-705d0d565f3c",
+      "targetId": "43f86158-d4f2-440f-b896-5b489315656e",
+      "sourceHandle": "6b2609a0-3776-4313-8864-ac5bacce383d"
+    },
+    {
+      "id": "718e88ee-af87-4fa9-8305-9c25602e9626",
+      "type": "edge",
+      "sourceId": "a134a00b-a856-46dc-9620-ca5ef4b33b24",
+      "targetId": "43f86158-d4f2-440f-b896-5b489315656e"
+    },
+    {
+      "id": "175b2fa1-a720-460e-8fb6-e2983ca70908",
+      "type": "edge",
+      "sourceId": "ff425641-7812-444d-9356-b17dabadb331",
+      "targetId": "43f86158-d4f2-440f-b896-5b489315656e"
+    },
+    {
+      "id": "2417b700-222f-42ce-b32c-5eccb8a4edd1",
+      "type": "edge",
+      "sourceId": "4cbcafbb-2a58-4dad-8574-43a151aed97a",
+      "targetId": "dbabfdb8-71b0-4446-8ce3-84fde6a10c9e"
+    },
+    {
+      "id": "e3883cf3-1f95-4de6-92a7-0e849886a881",
+      "type": "edge",
+      "sourceId": "dbabfdb8-71b0-4446-8ce3-84fde6a10c9e",
+      "targetId": "d1bf50ee-13cd-486a-9970-21906b82aea8"
+    },
+    {
+      "id": "2a3963df-3fed-44e5-b8e5-08f6e4124a13",
+      "type": "edge",
+      "sourceId": "d1bf50ee-13cd-486a-9970-21906b82aea8",
+      "targetId": "0db4f2fc-38e1-4656-ab87-06400c063638"
+    }
+  ]
+}
