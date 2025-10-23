@@ -9,6 +9,7 @@ from datetime import datetime
 from clients.external_api_client import ExternalAPIClient
 from database import fetch_filtered_work_orders
 from config import build_simple_response
+from .billing_processor import BillingProcessor
 
 logger = logging.getLogger(__name__)
 
@@ -17,6 +18,7 @@ class BillingService:
     
     def __init__(self):
         self.external_client = ExternalAPIClient()
+        self.billing_processor = BillingProcessor()
     
     async def process_billing_flow(self, country_id: int, company_id: str) -> Dict[str, Any]:
         """
@@ -134,6 +136,162 @@ class BillingService:
                 "error": "Single Item Processing Error",
                 "details": str(e),
                 "original_item": billing_item
+            }
+    
+    async def continue_billing_processing(self, api_result: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Continúa el procesamiento de facturación después de la API externa
+        
+        Args:
+            api_result: Resultado de la API externa con tsl_wo_work_order_attribute
+            
+        Returns:
+            Resultado del procesamiento continuado
+        """
+        logger.info("🔄 Continuando procesamiento de facturación en sitio...")
+        
+        try:
+            # Procesar el resultado de la API externa
+            processing_result = await self.billing_processor.process_billing_result(api_result)
+            
+            if not processing_result.get("success", False):
+                return processing_result
+            
+            # Agregar información adicional del procesamiento
+            result = {
+                "success": True,
+                "message": "Procesamiento de facturación en sitio completado",
+                "billing_processing": processing_result,
+                "api_result": api_result
+            }
+            
+            logger.info("✅ Procesamiento de facturación en sitio completado exitosamente")
+            return result
+            
+        except Exception as e:
+            logger.error(f"💥 Error en procesamiento continuado: {str(e)}")
+            return {
+                "success": False,
+                "error": "Billing Processing Error",
+                "details": str(e)
+            }
+    
+    async def process_massive_billing_flow(self, country_id: int, company_id: str) -> Dict[str, Any]:
+        """
+        Procesa el flujo masivo de facturación para múltiples órdenes
+        
+        Args:
+            country_id: ID del país
+            company_id: UUID de la empresa
+            
+        Returns:
+            Resultado del procesamiento masivo
+        """
+        start_time = datetime.now()
+        logger.info(f"🚀 Iniciando proceso masivo de facturación para country_id={country_id}, company_id={company_id}")
+        
+        try:
+            # Paso 1: Obtener todas las órdenes de la base de datos
+            logger.info("📊 Obteniendo órdenes de la base de datos...")
+            raw_data = fetch_filtered_work_orders(country_id, company_id)
+            
+            if not raw_data:
+                logger.warning("⚠️ No se encontraron órdenes para los parámetros especificados")
+                return {
+                    "success": False,
+                    "message": "No se encontraron órdenes para los parámetros especificados",
+                    "country_id": country_id,
+                    "company_id": company_id,
+                    "processed_orders": 0,
+                    "successful_orders": 0,
+                    "failed_orders": 0
+                }
+            
+            logger.info(f"📦 Se encontraron {len(raw_data)} órdenes para procesar")
+            
+            # Paso 2: Procesar cada orden con API externa
+            logger.info("🌐 Procesando órdenes con API externa...")
+            context_list = [v for v in raw_data.values()]
+            billing_items = build_simple_response(context_list)
+            
+            # Procesar con API externa
+            processing_results = await self.external_client.process_billing_items_batch(billing_items)
+            
+            # Paso 3: Procesar cada resultado con reglas
+            logger.info("🔧 Procesando resultados con reglas de facturación...")
+            massive_results = []
+            
+            for i, api_result in enumerate(processing_results):
+                if api_result.get("success", False):
+                    logger.info(f"📋 Procesando orden {i+1}/{len(processing_results)} con reglas...")
+                    
+                    # Procesar con reglas
+                    rule_processing = await self.billing_processor.process_billing_result(api_result)
+                    
+                    # Obtener resultado de la segunda ejecución de API (con reglas)
+                    rule_result = rule_processing.get("rule_result", {})
+                    api_execution_result = rule_result.get("api_execution_result", {})
+                    second_api_result = api_execution_result.get("api_result", {})
+                    
+                    # Simplificar resultado - mantener ambos api_result
+                    massive_results.append({
+                        "order_index": i,
+                        "first_api_result": api_result,  # Primera ejecución (inicial)
+                        "second_api_result": second_api_result,  # Segunda ejecución (con reglas)
+                        "success": rule_processing.get("success", False),
+                        "rule_name": rule_result.get("rule_name", "N/A"),
+                        "api_execution_success": api_execution_result.get("success", False)
+                    })
+                else:
+                    logger.warning(f"⚠️ Orden {i+1} falló en API externa: {api_result.get('error', 'Unknown error')}")
+                    massive_results.append({
+                        "order_index": i,
+                        "first_api_result": api_result,  # Primera ejecución (falló)
+                        "second_api_result": None,  # No hay segunda ejecución
+                        "success": False,
+                        "error": api_result.get("error", "API execution failed")
+                    })
+            
+            # Paso 4: Consolidar resultados
+            successful_orders = [r for r in massive_results if r.get("success", False)]
+            failed_orders = [r for r in massive_results if not r.get("success", False)]
+            
+            end_time = datetime.now()
+            processing_time = (end_time - start_time).total_seconds()
+            
+            result = {
+                "success": True,
+                "message": "Proceso masivo de facturación completado",
+                "country_id": country_id,
+                "company_id": company_id,
+                "processing_time_seconds": processing_time,
+                "total_orders": len(massive_results),
+                "successful_orders": len(successful_orders),
+                "failed_orders": len(failed_orders),
+                "success_rate": f"{(len(successful_orders) / len(massive_results) * 100):.2f}%" if massive_results else "0%",
+                "results": massive_results,
+                "summary": {
+                    "total_orders": len(massive_results),
+                    "successful": len(successful_orders),
+                    "failed": len(failed_orders),
+                    "processing_time": f"{processing_time:.2f}s"
+                }
+            }
+            
+            logger.info(f"✅ Proceso masivo completado: {len(successful_orders)}/{len(massive_results)} órdenes exitosas en {processing_time:.2f}s")
+            return result
+            
+        except Exception as e:
+            logger.error(f"💥 Error en proceso masivo: {str(e)}")
+            return {
+                "success": False,
+                "error": "Massive Billing Process Error",
+                "details": str(e),
+                "country_id": country_id,
+                "company_id": company_id,
+                "processed_orders": 0,
+                "successful_orders": 0,
+                "failed_orders": 0
             }
     
     def get_processing_statistics(self, results: List[Dict[str, Any]]) -> Dict[str, Any]:

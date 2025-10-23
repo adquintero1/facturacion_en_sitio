@@ -44,7 +44,7 @@ class ExternalAPIClient:
                     return {
                         "success": True,
                         "data": result,
-                        "original_item": billing_item
+                        "context": billing_item.get("context", {})  # Solo mantener el context inicial
                     }
                 else:
                     logger.error(f"❌ Error en API externa: {response.status_code} - {response.text}")
@@ -52,7 +52,7 @@ class ExternalAPIClient:
                         "success": False,
                         "error": f"API Error: {response.status_code}",
                         "details": response.text,
-                        "original_item": billing_item
+                        "context": billing_item.get("context", {})  # Solo mantener el context inicial
                     }
                     
         except httpx.TimeoutException:
@@ -61,7 +61,7 @@ class ExternalAPIClient:
                 "success": False,
                 "error": "Timeout",
                 "details": "La API externa no respondió en el tiempo esperado",
-                "original_item": billing_item
+                "context": billing_item.get("context", {})  # Solo mantener el context inicial
             }
         except Exception as e:
             logger.error(f"💥 Error inesperado: {str(e)}")
@@ -69,7 +69,7 @@ class ExternalAPIClient:
                 "success": False,
                 "error": "Unexpected Error",
                 "details": str(e),
-                "original_item": billing_item
+                "context": billing_item.get("context", {})  # Solo mantener el context inicial
             }
     
     async def process_billing_items_batch(self, billing_items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
@@ -103,7 +103,7 @@ class ExternalAPIClient:
                     "success": False,
                     "error": "Processing Exception",
                     "details": str(result),
-                    "original_item": billing_items[i]
+                    "context": billing_items[i].get("context", {})  # Solo mantener el context inicial
                 })
             else:
                 processed_results.append(result)
