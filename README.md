@@ -70,11 +70,11 @@ La configuración de la base de datos se encuentra en `config.py`:
 
 ```python
 DB_CONFIG = {
-    "host": "192.168.1.26",
-    "database": "dbWorkOrderServices",
-    "user": "admin",
-    "password": "!Qazxsw2",
-    "port": 5433
+    "host": "xxx.xxx.x.xx",
+    "database": "dbxxxxxxxxxxx",
+    "user": "xxxxxxx",
+    "password": "xxxxxxx",
+    "port": 5x3x
 }
 ```
 
