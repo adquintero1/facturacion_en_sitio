@@ -1,0 +1,1043 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "009e04d3-20ca-4569-a19f-86f8d331420c",
+      "name": "request",
+      "position": {
+        "x": -845,
+        "y": 265
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "8022097d-69bd-41c1-b461-829043b16657",
+      "name": "response",
+      "position": {
+        "x": 1110,
+        "y": 1105
+      }
+    },
+    {
+      "type": "expressionNode",
+      "content": {
+        "expressions": [
+          {
+            "id": "86a0fd73-7583-4c79-9f0f-a3e8b00c906a",
+            "key": "result.status_code",
+            "value": "\"AFINIA-EN001-ENRE001-METODOS DE CALCULO-ALUMBRADO PUBLICO\""
+          },
+          {
+            "id": "391c2f52-cf86-4ead-ba42-ec421adbacc0",
+            "key": "result.status_description",
+            "value": "\"Error al validar geo entity/tarifa/estrato,  invalido o no parametrizado en la regla\""
+          },
+          {
+            "id": "4f28372d-ba30-4d86-af70-b0261462f651",
+            "key": "result.status_type",
+            "value": "\"ERROR\""
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "4279bc5a-58c0-4dbf-8d4e-0fa2a52e3786",
+      "name": "Error",
+      "position": {
+        "x": 530,
+        "y": 2305
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "4fc10531-30b6-460f-b18c-9f1aac54810c",
+            "_description": "",
+            "4540c3f3-3d54-44a2-9419-e1a2b2128d54": "'1'",
+            "b318430f-60a8-4cb9-b435-8e6eb367a5b2": "'estrato_1'"
+          },
+          {
+            "_id": "d7c5a9bc-5cd8-476d-85d4-68d8b768e9ea",
+            "_description": "",
+            "4540c3f3-3d54-44a2-9419-e1a2b2128d54": "'2'",
+            "b318430f-60a8-4cb9-b435-8e6eb367a5b2": "'estrato_2'"
+          },
+          {
+            "_id": "981e9b78-1848-410a-82d3-32c234539c3f",
+            "_description": "",
+            "4540c3f3-3d54-44a2-9419-e1a2b2128d54": "'3'",
+            "b318430f-60a8-4cb9-b435-8e6eb367a5b2": "'estrato_3'"
+          },
+          {
+            "_id": "1bcb75a6-e2ab-4af3-b462-133309b0486f",
+            "_description": "",
+            "4540c3f3-3d54-44a2-9419-e1a2b2128d54": "",
+            "b318430f-60a8-4cb9-b435-8e6eb367a5b2": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "4540c3f3-3d54-44a2-9419-e1a2b2128d54",
+            "name": "Estrato socioeconomico",
+            "field": "lower(tsl_wo_work_order_attribute.stratum)"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "b318430f-60a8-4cb9-b435-8e6eb367a5b2",
+            "name": "Output",
+            "field": "estrato"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "76538d73-42d1-4b3a-9383-feeb25363bae",
+      "name": "Valida estrato",
+      "position": {
+        "x": -565,
+        "y": 265
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "d1d840d2-20ba-4b09-bf9c-a4b3dbbb08c4",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'e80346b9-26fc-43a8-ae99-9c08598b844b','c627961d-67e7-4510-8361-3c59864f21d0','ba8804ea-e4cd-4475-b5b6-dd0d492f40f8','2afd7370-31d8-421b-84be-8f5a969c439d','9fb2ed19-ed3c-4ad3-b18c-574bb7e58c92','56380558-e2df-4a2f-8b17-7f97ac964cf5','bcb95485-0144-4889-ae32-894693e52d92','5891c0aa-9b5b-4663-b5ab-1e7aba4be4b8','0b1f112d-59df-4380-b039-ac9d0cd52b79'"
+          },
+          {
+            "_id": "5c9aad8e-35c0-4580-95fe-ee65b630a65f",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'05c29c7d-885f-419e-b675-3d6b6cff4413','6c724cb1-e40d-4059-83d1-99bf802b1fe1','75ff1bf8-b661-4100-9a01-8249e8565cdd','4e2381c2-772d-4443-a824-e988b12ac380','70b99a27-3475-4c1e-b30a-ac5a47ababa4','627c836e-ddab-45df-b833-f72b7f229255','9c533d5a-3c10-4aa2-b0e8-8f636b8ac636','ce430ce4-b8a1-47cc-b152-684e8c174e73','387bdc73-43df-4376-bd66-7638d998362a'"
+          },
+          {
+            "_id": "4ea42b80-4e2f-4a45-a881-43a29855b420",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'69250023-b5f6-4f44-a22e-7a581193a5ca','303ffbcb-ad1a-4487-8ff7-61f196489786','d2e10c6d-47a9-453c-a363-966d9c490c69','8b52cd75-1f7e-4f63-af8b-dad5398420b0','c26f8009-62eb-4a71-80c4-94e96144438a','61d544ad-760f-4d5c-8d65-25c02329c44e','0f0557a2-590a-4466-9f70-fd115963e907','3409e690-3852-4dc1-bf6b-dda348dd7dbb','35db27fe-3e9c-46db-a657-6ca9334716ac','11ee56e9-8363-4a3b-bccf-35a85ea72b88','66f59ea7-589c-47cf-8bcf-198ded9ae4ed','59751a12-3570-4a67-8554-23a03fc9b9c1','1f3f0d3b-1427-4a86-a5c2-fd2593cafaa0','0c516a0a-ed2f-4067-a992-3f9e1c5ec78c','94f72b0a-1843-408b-a8db-3d7e55ad3335','09405452-e99f-4c4f-9b76-71111ef654a1','97d5f7d0-5eca-4654-a3d2-9c915c6212ea','c7ed1094-62c9-4c61-8e95-c9acec7469e3','630f1638-e69c-4c5e-8404-ea58db4f7108','19336199-edd1-42b8-911e-409e1b1e1ac7','6673f54c-4e8c-47a6-bc9e-ff03809672e3','b535ec7b-6550-4875-a125-dbee798f0249','57394438-14b5-4f97-bd3b-fe222c6224f0','779e1548-fd64-44fa-97a7-d0498d1b20e9','24f72a2c-a969-4af3-a7da-1bacd145a6b2','a7f51cf1-553b-4191-a508-dca0f7b54115','a0681dab-8144-4244-b16a-fa7cad49489b','37a3e6dd-19d7-4865-a304-061f35f9e7ed','9a8eb1f5-86fb-4b18-aa88-136ceb3cc170','763fc150-8fdb-40a1-a295-08efec49c21c','f5dc54d3-c480-4b48-96a5-04848da5056e','04e956cb-f401-419a-bcdf-a55ba0fbeafe','89412809-0448-404b-b5f2-35a3e037e400','e7a039e6-e714-4cdb-b367-772e6035394a','28cb8de4-c198-4b66-b1ac-ce06bef64f38','ee3fddf7-3b3a-4108-bc18-291b719cbff2','63b0cbe1-5c3a-452d-ac9b-076510539744','6b3442fe-0606-404b-b196-8880edd12bc8','e3084243-f0f3-43f3-87e5-217f90420088','5f6edee8-c1e5-477a-8e52-18751f2f772c','203d1670-d388-440e-b587-b40b1f1e0b84','5cfe57b7-b9bf-4266-8768-2bfbb912294e','902b8867-fdd3-41b7-ad30-b42e16a3b761','f40631eb-64a4-4234-9933-60b7b6ff9cac','166bf8ca-fed4-44d8-ae3e-574d9f4716d9','06515b7c-e43e-4323-ae3d-f873619c98ac','313f292b-f9a7-419f-8983-d10e2ee74a3d','bdcdd52d-fa87-4617-96f7-8e7364e15be8','f0aebe25-d3bd-4caa-99b0-ba1aa768a860','63376f15-9a2f-48fd-a85d-e0baab1820e1','609fd0d6-7f47-4fd1-b703-5daf39611b6c','9dac623f-c1b8-4488-a8b3-1701ce6e6119','cc3beef4-f472-472d-b335-01d7aaee6235','c844570e-fcc3-4564-a8ee-8d51aefc0cd3','e3f89ad8-10b6-4555-a7d6-d60d031cf34f','4827594d-d56b-433b-84cc-58aae8029c86','d147f4f8-2e08-4748-8871-121c8af81911','2907faa1-2b96-4009-84d6-6da05fd6d2e6','283de6a1-c106-4786-85b7-d545ad14dfe0','db28be7f-58d8-4112-bc17-2cf0c86e304d','281a1750-6ee4-4a0e-8943-503a0a34c47c','c9eb613a-99f9-4916-b91d-54e8ca7a4105','58c6670a-252f-4a0b-b0f6-e328803a2839','fa00dc1f-71dc-44b8-9f89-95b85ccca3b9','b81675f0-8671-4f73-a956-ca6d7bbce6e4','37a8d057-f71f-494c-b8a4-dc14d2ad16af','25afc6ae-ac59-41e0-b896-e72c905e3110','e642594b-dd41-4d42-9eec-ef0c07a488aa','77783bfd-c81a-4a5c-870c-e87cc479034d','f93cc08f-b51a-4aa6-b9d7-de27684ccc28','608c4684-ba2f-47f9-8b50-463436d0c6ba','8798d598-1cd7-4951-84f9-95dd316f5cf4','ea19ba67-ddca-470a-92a8-9ce0409f1cf0','c663d280-7a0d-4be3-9305-cfd701329f60','701141d0-6e4d-4b45-aea8-901a078bc214'"
+          },
+          {
+            "_id": "734e08db-82af-4510-b0d7-ffa40a8a9c09",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'0d374999-7598-473b-ace3-a86e3b58da82','a64f40c3-a667-4030-842b-117a03bb1fc1','cd8b6512-f834-409e-bf50-9ec34b3041f1','69330ee5-ac0f-4357-9542-c4a02dec793d','ad71b9d4-b815-4efd-a729-b4fb5eb118ec','2809bd45-ff80-4dd6-8dbe-d992378e1b9d','f62ce9f6-b0d0-4a32-8239-a18491c2d376','c5b549ea-b24e-41fe-852f-db08549a9d45','5c47182d-6f3e-4304-a03a-7f99d5dea77e','4e18af91-2475-4977-a1a1-eef979612ed2','4418ac53-ea30-4281-8bed-b9e57110767a','e749cd41-4191-4d84-98d9-bbcb4932490d','f344d770-10b1-4d2e-85a5-76f6e0c4acda','207f91ba-ef82-4adc-96ae-02cf614a5726','555d31b4-fe46-4f83-bfbc-85a4b4a0bc3b','4438b469-8bb6-48e6-aa65-b69c6fe024cd','c03189f4-3955-4f41-a13b-406a2ca94b6d'"
+          },
+          {
+            "_id": "979ac81f-900b-4fe3-80c4-a0704f8581f5",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONUSMO (RANGOS MENORES), PORCENTAJE FIJO DE IMPORTE (RANGO MAYOR)'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'c1c76c44-9cdc-4329-ac65-2446c2383f8a','7330587e-adf1-400d-bd49-d38be434b185','26f708e1-0f30-45ae-9f93-1c64f25b0639','bf5fb82c-2271-45af-be9d-b51748c6f746','e823fe5a-ad7e-47eb-9b78-f2464552ad80','fe9ed949-1e66-4ad9-9b24-1bc5ca8503d1','2de43666-e2d1-4447-b63d-2c55425633a6','310935c1-656a-4d67-81ec-b5be47bbc82a','f2dc561e-6434-4b1a-b7dd-dc3ca43fbae2','005eb096-3927-4066-b9d2-902706aa5e81','bcf8f591-97a8-4c45-9468-2ae7f7669ecd','19fcb103-9575-46c1-9fc1-9df46229aa43','a601c8f8-de68-4ed1-a886-e68543977d42','c18d8970-517f-46b8-b397-74375db70076','ad796f76-d6e1-4c8c-ace4-d07decf7681d','c66501d0-cd1b-4c5a-8e45-7f3238d7bff1','83d7c9f9-9a2c-4d79-8467-7037cdec5c00','45c7674f-269a-4876-ae74-8ffc18d6c2c4','f6f625e6-3dd7-49ab-85d4-4c0fd4734b98','d2abeb82-6fd6-4645-8e55-14b5ceaf29f3'"
+          },
+          {
+            "_id": "9edbeb7a-73bf-494e-88e5-8095eb048b32",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'76b137de-ec79-4472-a2b9-fd8914c598bf','4e7981b8-ca69-47d7-b9e7-b2b0e3e719bc','76a5b758-d88a-4c3b-8a19-16683882b0c1','f61dc514-29dc-487f-ada1-d6c39fdf9263','1f7bdbc8-121c-45a9-9411-9f82f493ec9a','b2e55aea-e303-455f-af32-bcec7c81869a','b1dcde6f-22d2-4223-99d1-6d8cedfc12f3','a513ea15-a375-4107-b4a8-cdea45ddd866','1adfefd0-cb59-4f3d-9dce-44e5e0a8fce8','71bd4369-a256-4f69-9b25-fdda9153669c','a8e05ff2-ee5f-4ba1-95cf-4948d6a2f980','732d42af-fc7d-4f59-89ff-ed0b49492c7c'"
+          },
+          {
+            "_id": "d440a1c7-20e6-446b-b07a-3e15d571243d",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'215ac6e2-8b28-4b55-a318-eb87ba0e54b1'"
+          },
+          {
+            "_id": "2946bcee-afa6-4373-ac16-fbfd8d8cdb61",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_1','estrato_2'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'a4743df8-9ee4-4ba1-813b-9227c26067f0','e79129a8-0568-4850-a688-217e6c295df5'"
+          },
+          {
+            "_id": "94557d2f-c20e-44e6-8f78-51f0f065b0c6",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_1','estrato_2','estrato_3','estrato_4'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'f1d483aa-77e8-42e9-a65d-9051571c8899'"
+          },
+          {
+            "_id": "db419c23-0830-4423-bf12-fee4865c6297",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'76b137de-ec79-4472-a2b9-fd8914c598bf','76a5b758-d88a-4c3b-8a19-16683882b0c1','1f7bdbc8-121c-45a9-9411-9f82f493ec9a','b2e55aea-e303-455f-af32-bcec7c81869a','d33287bd-7e97-4223-9707-c13299c0ecb3'"
+          },
+          {
+            "_id": "2ab7290d-1bc8-438e-bc88-7313b1de8ca0",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'b1dcde6f-22d2-4223-99d1-6d8cedfc12f3','11e1d5ac-bd5d-49dc-96fb-336d0aa23b36'"
+          },
+          {
+            "_id": "f411e5f3-a4a9-48d8-8169-f493138b1fd0",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_5','estrato_6'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'8a7183d1-396a-46a8-910b-f6cffddcbd9a','90124426-1311-4913-a099-b94a391aa4e8'"
+          },
+          {
+            "_id": "b88d39d4-2a25-4221-a028-177e8e79eeb2",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_1','estrato_2','estrato_3'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'9f3222dc-1898-4853-ab17-23e576baf16c','5c10a4bc-9785-4c96-a3c6-309ddf845024','49ae6c74-dea9-4f7d-99cd-105cea5a72f4'"
+          },
+          {
+            "_id": "68f98d52-2e2e-43a6-88ba-c5e7c8da2ec6",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'49ae6c74-dea9-4f7d-99cd-105cea5a72f4'"
+          },
+          {
+            "_id": "ea6373b0-bbd0-4dae-9dc4-b80eadd5bf2f",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'6f97eb41-e3c9-4889-8811-f05d52d39a5a'"
+          },
+          {
+            "_id": "21934319-599d-4b2f-8f76-bd10d333c561",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'a513ea15-a375-4107-b4a8-cdea45ddd866'"
+          },
+          {
+            "_id": "884086b1-9a02-42b2-93b6-cc1a0d3e4ed5",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'f61dc514-29dc-487f-ada1-d6c39fdf9263','71bd4369-a256-4f69-9b25-fdda9153669c'"
+          },
+          {
+            "_id": "f1a59d65-5225-49df-bf88-16ab9a972708",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'b1dcde6f-22d2-4223-99d1-6d8cedfc12f3'"
+          },
+          {
+            "_id": "27b66bb4-c629-4aea-afc2-1dd4fdd64809",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'1adfefd0-cb59-4f3d-9dce-44e5e0a8fce8','f1d483aa-77e8-42e9-a65d-9051571c8899','8a7183d1-396a-46a8-910b-f6cffddcbd9a'"
+          },
+          {
+            "_id": "c23da114-39cb-4f8b-be30-dfee5ed9fe43",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_1','estrato_2','estrato_3','estrato_4'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'8a7183d1-396a-46a8-910b-f6cffddcbd9a','8e5db6f6-5421-4dbc-b5db-44f409f057d5','8432d973-4d44-42d9-a1d1-ed9a52f6e9b9'"
+          },
+          {
+            "_id": "ca864d21-e882-4480-872d-a58884213c09",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'d33287bd-7e97-4223-9707-c13299c0ecb3','11e1d5ac-bd5d-49dc-96fb-336d0aa23b36','7c22641c-4987-4ef2-99a1-880bdb45fed5','33ddf32d-097d-4795-8f56-e51207398b66'"
+          },
+          {
+            "_id": "a71cdca2-f425-4574-aef4-cc5f8c68e7d9",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'comercial','oficial','residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'072f97ec-607a-461f-9714-8f76e18c0754'"
+          },
+          {
+            "_id": "d939949d-9e60-4445-b583-c8c256e91c9f",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'0eba6f84-ff68-422a-883d-71852da0a6e6','88d61ed7-3541-4387-97bf-a49efc19560e','1e398309-c8ca-487d-830f-aefe6ec18936','ec0773ff-de3c-4bd9-84fa-59d9bcfdb79b'"
+          },
+          {
+            "_id": "0877f88d-f3d4-4dc5-9732-6628191d8779",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'comercial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'0b01d2e1-d58c-407c-9082-87ed5a066fc5'"
+          },
+          {
+            "_id": "bdadf9ad-566e-46e2-8bb5-cc1059e0e6b5",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'oficial','residencial','industrial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'000969f4-58e8-4320-b1ad-32bf6d1e4b8b'"
+          },
+          {
+            "_id": "fae2947c-bdd3-4bb7-9694-4632b579c221",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'oficial','residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'a02bbc87-a89b-4fc1-84ef-7cf1cc8660ce'"
+          },
+          {
+            "_id": "c8e79cf8-f35d-4609-8378-dcb413ab16ed",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_4','estrato_5','estrato_6'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'f56a3774-0bc7-478a-85dd-3b62c163d2d2'"
+          },
+          {
+            "_id": "608d8571-b9fd-4bf0-ad2c-3e809c12bf64",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'comercial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'b1dcde6f-22d2-4223-99d1-6d8cedfc12f3','000969f4-58e8-4320-b1ad-32bf6d1e4b8b'"
+          },
+          {
+            "_id": "6051daef-7c40-41e3-bb43-ec7c8ac400fd",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'732d42af-fc7d-4f59-89ff-ed0b49492c7c','33ddf32d-097d-4795-8f56-e51207398b66'"
+          },
+          {
+            "_id": "6cd1d2db-8012-493b-bcc6-f1b914e3251f",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'11e1d5ac-bd5d-49dc-96fb-336d0aa23b36'"
+          },
+          {
+            "_id": "87a83136-9638-498c-af52-890b9d84a748",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'5c10a4bc-9785-4c96-a3c6-309ddf845024'"
+          },
+          {
+            "_id": "465d76bb-fd68-436e-8a00-30b3d0a00ae9",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'4e7981b8-ca69-47d7-b9e7-b2b0e3e719bc','a8e05ff2-ee5f-4ba1-95cf-4948d6a2f980','a4743df8-9ee4-4ba1-813b-9227c26067f0','9f3222dc-1898-4853-ab17-23e576baf16c','7c22641c-4987-4ef2-99a1-880bdb45fed5','8e5db6f6-5421-4dbc-b5db-44f409f057d5','8432d973-4d44-42d9-a1d1-ed9a52f6e9b9','4eced3b2-41df-4a24-8d66-cc6188ae0dbd'"
+          },
+          {
+            "_id": "a3e26898-8fde-4639-9c62-22ac505f7be6",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_3','estrato_4','estrato_5','estrato_6'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'a4743df8-9ee4-4ba1-813b-9227c26067f0'"
+          },
+          {
+            "_id": "03e6dfd3-b0c4-43e2-84b4-8aec58479f73",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_4','estrato_5','estrato_6'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'49ae6c74-dea9-4f7d-99cd-105cea5a72f4','9f3222dc-1898-4853-ab17-23e576baf16c'"
+          },
+          {
+            "_id": "a91c4483-045e-4847-bf9b-6c84073b02fb",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'49ae6c74-dea9-4f7d-99cd-105cea5a72f4','5c10a4bc-9785-4c96-a3c6-309ddf845024'"
+          },
+          {
+            "_id": "600fbaa0-71e7-4126-86b0-1030a483a2c5",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'215ac6e2-8b28-4b55-a318-eb87ba0e54b1'"
+          },
+          {
+            "_id": "75b47c3c-5738-46b5-be41-bd2e39cdf828",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'072f97ec-607a-461f-9714-8f76e18c0754'"
+          },
+          {
+            "_id": "c2091669-9115-46ba-99c4-bc998843b8d1",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'0eba6f84-ff68-422a-883d-71852da0a6e6','88d61ed7-3541-4387-97bf-a49efc19560e','1e398309-c8ca-487d-830f-aefe6ec18936','ec0773ff-de3c-4bd9-84fa-59d9bcfdb79b'"
+          },
+          {
+            "_id": "4bc1578d-9f2e-4f4a-a2f1-cd301e2d8a3e",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','residencial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'0b01d2e1-d58c-407c-9082-87ed5a066fc5'"
+          },
+          {
+            "_id": "dda84ff9-7afc-4554-b2ed-a88f3c5fccd7",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'a02bbc87-a89b-4fc1-84ef-7cf1cc8660ce'"
+          },
+          {
+            "_id": "c40afd05-9547-4bf2-900a-da753f38aa23",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'comercial','residencial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'96f45e14-eb93-46a0-95d0-caf99ac2b502'"
+          },
+          {
+            "_id": "2a0d8a60-4c0b-4488-9f76-dfab6b9e913f",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'6f97eb41-e3c9-4889-8811-f05d52d39a5a'"
+          },
+          {
+            "_id": "ea3952b1-fc82-4ab4-88b8-697cd788178e",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'96f45e14-eb93-46a0-95d0-caf99ac2b502'"
+          },
+          {
+            "_id": "4af7b397-0f3e-4cee-bd9f-5a67f44e8dd0",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'industrial','comercial','oficial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'e79129a8-0568-4850-a688-217e6c295df5','90124426-1311-4913-a099-b94a391aa4e8','f56a3774-0bc7-478a-85dd-3b62c163d2d2'"
+          },
+          {
+            "_id": "c51f96d2-7ac5-427a-9bed-f04d15bb3e3a",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_3','estrato_4','estrato_5','estrato_6'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'e79129a8-0568-4850-a688-217e6c295df5'"
+          },
+          {
+            "_id": "85847ec7-06bb-431b-bf51-f2452f78174b",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_1','estrato_2','estrato_3','estrato_4'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'90124426-1311-4913-a099-b94a391aa4e8'"
+          },
+          {
+            "_id": "79a58738-2655-4366-8dd8-0b2853abd0e5",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "'estrato_1','estrato_2','estrato_3'",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'f56a3774-0bc7-478a-85dd-3b62c163d2d2'"
+          },
+          {
+            "_id": "31c6f7f7-1ef9-48cd-8d1d-4ff1229758c1",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "'residencial'",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": "'4eced3b2-41df-4a24-8d66-cc6188ae0dbd'"
+          },
+          {
+            "_id": "77eba04d-a535-44e8-87fd-18d9f6ba1112",
+            "_description": "",
+            "1387533d-adb9-44f9-9be9-1d7a87e389f5": "",
+            "18f369bb-b69d-45cb-8110-35738c57d0cb": "",
+            "f1e50b11-c800-499e-ada9-0aa4e37f78f7": "",
+            "fe633ee1-d42a-4b5f-97ee-e769cd5c4238": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "fe633ee1-d42a-4b5f-97ee-e769cd5c4238",
+            "name": "Geo entity id",
+            "field": "tsl_wo_work_order_attribute.geo_entity_id"
+          },
+          {
+            "id": "1387533d-adb9-44f9-9be9-1d7a87e389f5",
+            "name": "Tarifa",
+            "field": "tarifa"
+          },
+          {
+            "id": "18f369bb-b69d-45cb-8110-35738c57d0cb",
+            "name": "Estrato",
+            "field": "estrato"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "f1e50b11-c800-499e-ada9-0aa4e37f78f7",
+            "name": "Output",
+            "field": "metodo"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "0806b082-e2c3-4d6f-b2d7-5a4c6c488d39",
+      "name": "Valida municipio",
+      "position": {
+        "x": -25,
+        "y": 265
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "c9592680-dc36-4241-a56d-f4f5e0a4b87b",
+            "_description": "",
+            "37052a67-8319-490f-8744-cb52d0ff392c": "'residencial'",
+            "437966a7-b86b-46c3-9971-06c4b22d69f5": "'residencial'"
+          },
+          {
+            "_id": "7bd00392-5ea2-4c73-8743-e683f766d286",
+            "_description": "",
+            "37052a67-8319-490f-8744-cb52d0ff392c": "'oficial'",
+            "437966a7-b86b-46c3-9971-06c4b22d69f5": "'oficial'"
+          },
+          {
+            "_id": "1a7b9ef9-41ed-462f-835d-fdc6e85d01c1",
+            "_description": "",
+            "37052a67-8319-490f-8744-cb52d0ff392c": "'comercial'",
+            "437966a7-b86b-46c3-9971-06c4b22d69f5": "'comercial'"
+          },
+          {
+            "_id": "714951d9-a352-4b6b-83bc-f3e21b71750a",
+            "_description": "",
+            "37052a67-8319-490f-8744-cb52d0ff392c": "'industrial'",
+            "437966a7-b86b-46c3-9971-06c4b22d69f5": "'industrial'"
+          },
+          {
+            "_id": "a81e7b2b-892f-4af6-82f7-58ceba0846a6",
+            "_description": "",
+            "37052a67-8319-490f-8744-cb52d0ff392c": "",
+            "437966a7-b86b-46c3-9971-06c4b22d69f5": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "437966a7-b86b-46c3-9971-06c4b22d69f5",
+            "name": "Tarifa",
+            "field": "lower(tsl_wo_work_order_attribute.rate_code)"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "37052a67-8319-490f-8744-cb52d0ff392c",
+            "name": "Output",
+            "field": "tarifa"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "f945ff73-d086-4659-bcbd-0dee41a15bc3",
+      "name": "Valida tarifa",
+      "position": {
+        "x": -290,
+        "y": 265
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "bc8652f3-1dc4-4a9b-858e-5a1fe12ffcc3",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO'",
+            "isDefault": false
+          },
+          {
+            "id": "a275c380-bf7b-4f72-ab04-9fe3aef71b21",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO'",
+            "isDefault": false
+          },
+          {
+            "id": "257fe6b8-08b2-4e61-93df-cbf5466ce819",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE IMPORTE'",
+            "isDefault": false
+          },
+          {
+            "id": "43b8a300-3c2e-4be8-bc78-7afae178d5bd",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE'",
+            "isDefault": false
+          },
+          {
+            "id": "69c1c942-fb8e-41a4-b33e-55c96665351f",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO'",
+            "isDefault": false
+          },
+          {
+            "id": "7439cb40-4a8f-47a9-87ee-a9089d73feae",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE'",
+            "isDefault": false
+          },
+          {
+            "id": "ac6f0f25-0da3-4bbc-84d1-5e48796d2f47",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO'",
+            "isDefault": false
+          },
+          {
+            "id": "36c3cc43-f6fb-46bf-a6e6-d579629d2502",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO'",
+            "isDefault": false
+          },
+          {
+            "id": "7d18a48f-742e-44df-83a2-9b115360002a",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONUSMO (RANGOS MENORES), PORCENTAJE FIJO DE IMPORTE (RANGO MAYOR)'",
+            "isDefault": false
+          },
+          {
+            "id": "ad7ab1a7-fb39-4d94-8e59-87d0bac4ac81",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE'",
+            "isDefault": false
+          },
+          {
+            "id": "97b3ac39-81dc-4916-8467-437a60a7eb7f",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS IMPORTE PARA CONSUMOS MENOR QUE CONSTANTE E IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE FIJO DE IMPORTE PARA CONSUMOS MAYORES QUE CONSTANTE'",
+            "isDefault": false
+          },
+          {
+            "id": "572010c7-eec2-498e-8199-55b46b1c86bb",
+            "condition": "metodo == 'AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS CONSUMO MULTIPLICADO POR PORCENTAJE CONSTANTE CON IMPORTE MAXIMO'",
+            "isDefault": false
+          },
+          {
+            "id": "6c504fa1-c5ca-4da9-b667-7d887345949d",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "name": "Metodo ?",
+      "position": {
+        "x": 245,
+        "y": 265
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"410\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "6b67cb7c-65b2-4fea-8940-268951de2bae",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO FIJO",
+      "position": {
+        "x": 525,
+        "y": 265
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"411\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "c24c8131-3b48-49bf-a294-dd94087c5f08",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONSUMO",
+      "position": {
+        "x": 525,
+        "y": 400
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"412\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE IMPORTE\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE IMPORTE\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE IMPORTE\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "eb42bee2-5b9c-4422-bd9f-426ad0d271e5",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE IMPORTE",
+      "position": {
+        "x": 525,
+        "y": 540
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"413\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "e0145267-18b1-4cc7-adfc-cf0a70450575",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE",
+      "position": {
+        "x": 525,
+        "y": 680
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"414\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "d92471e2-1fbc-457d-9ceb-6bd91d7e4998",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE CONSUMO",
+      "position": {
+        "x": 525,
+        "y": 820
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"415\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "179e59e2-abe8-4cb5-9a26-f79625ba8e92",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE",
+      "position": {
+        "x": 525,
+        "y": 960
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"416\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "a680a257-63a2-4653-a9fe-06a7a13f00c0",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MINIMO POR RANGOS DE CONSUMO",
+      "position": {
+        "x": 525,
+        "y": 1100
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"417\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "4319f376-e312-455f-98cb-e6e45cb96d84",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PORCENTAJE FIJO DE IMPORTE, CON IMPORTE MAXIMO",
+      "position": {
+        "x": 525,
+        "y": 1260
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"418\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONUSMO (RANGOS MENORES), PORCENTAJE FIJO DE IMPORTE (RANGO MAYOR)\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONUSMO (RANGOS MENORES), PORCENTAJE FIJO DE IMPORTE (RANGO MAYOR)\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONUSMO (RANGOS MENORES), PORCENTAJE FIJO DE IMPORTE (RANGO MAYOR)\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "fdff0544-54e8-42b4-950a-a23075eab692",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS DE CONUSMO (RANGOS MENORES), PORCENTAJE FIJO DE IMPORTE (RANGO MAYOR)",
+      "position": {
+        "x": 525,
+        "y": 1415
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"419\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "a4260654-d268-44f3-bc4b-1e3988e68fd7",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE DE IMPORTE POR RANGOS DE IMPORTE",
+      "position": {
+        "x": 525,
+        "y": 1620
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"420\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS IMPORTE PARA CONSUMOS MENOR QUE CONSTANTE E IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE FIJO DE IMPORTE PARA CONSUMOS MAYORES QUE CONSTANTE\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS IMPORTE PARA CONSUMOS MENOR QUE CONSTANTE E IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE FIJO DE IMPORTE PARA CONSUMOS MAYORES QUE CONSTANTE\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS IMPORTE PARA CONSUMOS MENOR QUE CONSTANTE E IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE FIJO DE IMPORTE PARA CONSUMOS MAYORES QUE CONSTANTE\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "1ae35b5b-a966-4a55-819a-abb6c2052680",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS IMPORTE PARA CONSUMOS MENOR QUE CONSTANTE E IMPORTE MAYOR ENTRE PRECIO POR RANGOS DE IMPORTE Y PORCENTAJE FIJO DE IMPORTE PARA CONSUMOS MAYORES QUE CONSTANTE",
+      "position": {
+        "x": 525,
+        "y": 1810
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.public_lighting_billing_items)) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.public_lighting_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"421\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS CONSUMO MULTIPLICADO POR PORCENTAJE CONSTANTE CON IMPORTE MAXIMO\",\n    calculation_method_description:\n      \"Metodo de calculo de alumbrado publico\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS CONSUMO MULTIPLICADO POR PORCENTAJE CONSTANTE CON IMPORTE MAXIMO\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS CONSUMO MULTIPLICADO POR PORCENTAJE CONSTANTE CON IMPORTE MAXIMO\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "b58e4ae9-07ca-475e-ad41-ce12ad670575",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ALUMBRADO PUBLICO-PRECIO POR RANGOS CONSUMO MULTIPLICADO POR PORCENTAJE CONSTANTE CON IMPORTE MAXIMO",
+      "position": {
+        "x": 530,
+        "y": 2100
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "a88918c7-844a-465e-9609-4fce31255479",
+      "sourceId": "4279bc5a-58c0-4dbf-8d4e-0fa2a52e3786",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "bf406aa3-ba0b-4e68-b2f1-3a4bfe31275f",
+      "sourceId": "76538d73-42d1-4b3a-9383-feeb25363bae",
+      "targetId": "f945ff73-d086-4659-bcbd-0dee41a15bc3",
+      "type": "edge"
+    },
+    {
+      "id": "10e485a6-cd76-4977-be53-7d10bf7010d8",
+      "sourceId": "f945ff73-d086-4659-bcbd-0dee41a15bc3",
+      "targetId": "0806b082-e2c3-4d6f-b2d7-5a4c6c488d39",
+      "type": "edge"
+    },
+    {
+      "id": "4b634a5f-cb58-4597-8f89-ed9c9522acef",
+      "sourceId": "0806b082-e2c3-4d6f-b2d7-5a4c6c488d39",
+      "targetId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "type": "edge"
+    },
+    {
+      "id": "54051516-473b-4aa2-99de-8310ce45963f",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "6b67cb7c-65b2-4fea-8940-268951de2bae",
+      "sourceHandle": "bc8652f3-1dc4-4a9b-858e-5a1fe12ffcc3",
+      "type": "edge"
+    },
+    {
+      "id": "a095fcd6-a7ec-471c-80c3-abac882ed42a",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "c24c8131-3b48-49bf-a294-dd94087c5f08",
+      "sourceHandle": "a275c380-bf7b-4f72-ab04-9fe3aef71b21",
+      "type": "edge"
+    },
+    {
+      "id": "a3bd6265-2dbf-4781-91fa-6b70c3ce7cf7",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "eb42bee2-5b9c-4422-bd9f-426ad0d271e5",
+      "sourceHandle": "257fe6b8-08b2-4e61-93df-cbf5466ce819",
+      "type": "edge"
+    },
+    {
+      "id": "ff3cae90-9421-42ee-a45a-2a023b6e67bb",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "e0145267-18b1-4cc7-adfc-cf0a70450575",
+      "sourceHandle": "43b8a300-3c2e-4be8-bc78-7afae178d5bd",
+      "type": "edge"
+    },
+    {
+      "id": "22b4d8b9-dfee-46e7-996d-d3f6cd9b869c",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "d92471e2-1fbc-457d-9ceb-6bd91d7e4998",
+      "sourceHandle": "69c1c942-fb8e-41a4-b33e-55c96665351f",
+      "type": "edge"
+    },
+    {
+      "id": "743448bb-befd-4794-8525-fa09d302beb6",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "179e59e2-abe8-4cb5-9a26-f79625ba8e92",
+      "sourceHandle": "7439cb40-4a8f-47a9-87ee-a9089d73feae",
+      "type": "edge"
+    },
+    {
+      "id": "ae4a84df-736a-47e6-832c-98fbc006524a",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "a680a257-63a2-4653-a9fe-06a7a13f00c0",
+      "sourceHandle": "ac6f0f25-0da3-4bbc-84d1-5e48796d2f47",
+      "type": "edge"
+    },
+    {
+      "id": "25d3dcd0-aeee-4400-85d1-981670440225",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "4319f376-e312-455f-98cb-e6e45cb96d84",
+      "sourceHandle": "36c3cc43-f6fb-46bf-a6e6-d579629d2502",
+      "type": "edge"
+    },
+    {
+      "id": "75f0365e-d8ce-4d70-9486-b0854bf320ed",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "fdff0544-54e8-42b4-950a-a23075eab692",
+      "sourceHandle": "7d18a48f-742e-44df-83a2-9b115360002a",
+      "type": "edge"
+    },
+    {
+      "id": "f9e24a8d-0feb-4aa4-abc0-c765b36851b8",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "a4260654-d268-44f3-bc4b-1e3988e68fd7",
+      "sourceHandle": "ad7ab1a7-fb39-4d94-8e59-87d0bac4ac81",
+      "type": "edge"
+    },
+    {
+      "id": "94995f6b-2975-4da1-80c6-c16afe671482",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "1ae35b5b-a966-4a55-819a-abb6c2052680",
+      "sourceHandle": "97b3ac39-81dc-4916-8467-437a60a7eb7f",
+      "type": "edge"
+    },
+    {
+      "id": "8bc4818b-4db9-40e2-915b-d436a7c1cf9e",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "b58e4ae9-07ca-475e-ad41-ce12ad670575",
+      "sourceHandle": "572010c7-eec2-498e-8199-55b46b1c86bb",
+      "type": "edge"
+    },
+    {
+      "id": "7d4b91f9-e3b2-483e-9054-5212459ad244",
+      "sourceId": "d50df50d-33b1-487b-9f14-d7d3ae7c5cec",
+      "targetId": "4279bc5a-58c0-4dbf-8d4e-0fa2a52e3786",
+      "sourceHandle": "6c504fa1-c5ca-4da9-b667-7d887345949d",
+      "type": "edge"
+    },
+    {
+      "id": "54bc8ae8-8a28-4bd6-8e5c-0d4c958f8a9a",
+      "sourceId": "6b67cb7c-65b2-4fea-8940-268951de2bae",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "0e867a7a-83ea-41f8-9ebd-ea313b818700",
+      "sourceId": "c24c8131-3b48-49bf-a294-dd94087c5f08",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "25d4d2a1-70af-416c-bbe9-81a3c22a174b",
+      "sourceId": "eb42bee2-5b9c-4422-bd9f-426ad0d271e5",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "116e8624-959a-48d1-b311-b0dd6bf82c98",
+      "sourceId": "e0145267-18b1-4cc7-adfc-cf0a70450575",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "add22bae-0934-485b-b709-bd4ace30e5a1",
+      "sourceId": "d92471e2-1fbc-457d-9ceb-6bd91d7e4998",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "e4bda62d-125a-4127-ba6f-a4a9b515117a",
+      "sourceId": "179e59e2-abe8-4cb5-9a26-f79625ba8e92",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "d96fab9d-6b15-4770-9542-5e34e9da5f86",
+      "sourceId": "a680a257-63a2-4653-a9fe-06a7a13f00c0",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "645ff0f3-6917-40b5-9c0f-7a673b2244d2",
+      "sourceId": "4319f376-e312-455f-98cb-e6e45cb96d84",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "ea7337d4-3aa9-42ba-9c73-f8aa485eccac",
+      "sourceId": "fdff0544-54e8-42b4-950a-a23075eab692",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "27b6353c-d752-480a-bffe-f11f6e06654e",
+      "sourceId": "a4260654-d268-44f3-bc4b-1e3988e68fd7",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "7aa2ebd6-d2e2-4149-b931-2c948e829d07",
+      "sourceId": "1ae35b5b-a966-4a55-819a-abb6c2052680",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "2aab2d7e-d88c-4905-acc7-3c6c3f4f3fec",
+      "sourceId": "b58e4ae9-07ca-475e-ad41-ce12ad670575",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "a63fc594-d9ac-40cc-b5df-cfddb1222a6e",
+      "sourceId": "009e04d3-20ca-4569-a19f-86f8d331420c",
+      "targetId": "76538d73-42d1-4b3a-9383-feeb25363bae",
+      "type": "edge"
+    }
+  ]
+}

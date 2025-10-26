@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "fabecd99-eb9e-41cc-9757-9839a342db10",
+      "name": "request",
+      "position": {
+        "x": 160,
+        "y": 400
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": "{}"
+      },
+      "id": "d02af356-87bb-48a9-8d2c-8165ba813de3",
+      "name": "response",
+      "position": {
+        "x": 730,
+        "y": 400
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n  const basePrice = parseFloat(input?.standard_pricing?.price ?? 0);\n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Cargo fijo not found\"\n      }\n    }\n  }\n\n if (basePrice != null) {\n    const billingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    billingItem.billing_item_amount = basePrice;\n\n    return {\n      ...input,\n      result: {\n          total_amount: basePrice,\n          status: \"OK\",\n          status_description: \"Cargo fijo calculation rule completed\"\n        }\n    };\n  } else {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"The amount of the Cargo fijo rule could not be calculated.\"\n      }\n    };\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "9cd33c69-0ac0-452e-8a93-39af7496aa2e",
+      "name": "calculate amount",
+      "position": {
+        "x": 430,
+        "y": 400
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "6dded925-5b17-4a5f-9b83-2a0b118eda78",
+      "sourceId": "fabecd99-eb9e-41cc-9757-9839a342db10",
+      "targetId": "9cd33c69-0ac0-452e-8a93-39af7496aa2e",
+      "type": "edge"
+    },
+    {
+      "id": "18387399-619a-454c-b532-6f92ec426314",
+      "sourceId": "9cd33c69-0ac0-452e-8a93-39af7496aa2e",
+      "targetId": "d02af356-87bb-48a9-8d2c-8165ba813de3",
+      "type": "edge"
+    }
+  ]
+}

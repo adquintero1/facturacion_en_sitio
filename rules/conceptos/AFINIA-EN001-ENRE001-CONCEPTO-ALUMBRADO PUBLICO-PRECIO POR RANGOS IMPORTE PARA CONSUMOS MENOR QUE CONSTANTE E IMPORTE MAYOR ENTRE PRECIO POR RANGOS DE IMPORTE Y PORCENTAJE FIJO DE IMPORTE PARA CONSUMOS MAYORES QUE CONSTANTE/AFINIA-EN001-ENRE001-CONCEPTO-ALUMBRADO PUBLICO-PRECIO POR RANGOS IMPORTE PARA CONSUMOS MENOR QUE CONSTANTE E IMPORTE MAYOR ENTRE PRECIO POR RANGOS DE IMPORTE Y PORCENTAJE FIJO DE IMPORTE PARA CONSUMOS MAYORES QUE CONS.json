@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "5d8bc9d0-c2a8-4329-b2aa-0c3ae29e8c65",
+      "name": "response",
+      "position": {
+        "x": 1040,
+        "y": 0
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n  // Parámetros de regla\r\n  const parameterBillingItemCodeForAmount = input?.parametros_de_la_regla?.parameter_billingItem_code_for_amount ?? null;\r\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  // 1 Buscar importe base desde billing_items (ej: \"consumo\")\r\n  const activeEnergyBillingItems = input?.tsl_wo_work_order_attribute?.billing_items?.active_energy_billing_items ?? [];\r\n  const billingItemForAmount = activeEnergyBillingItems.find(item => item.legacy_billing_item_id === parameterBillingItemCodeForAmount);\r\n\r\n  if (!billingItemForAmount) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: `The parameter_billingItem_code_for_amount '${parameterBillingItemCodeForAmount}' could not be found in active_energy_billing_items`,\r\n        status: 'ERROR',\r\n      }\r\n    };\r\n  }\r\n\r\n  const rawAmount = billingItemForAmount.billing_item_amount;\r\n  const active_energy_amount = Number(rawAmount);\r\n  if (isNaN(active_energy_amount)) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: `Invalid active_energy_amount value: ${rawAmount}`,\r\n        status: 'ERROR',\r\n      }\r\n    };\r\n  }\r\n\r\n  // 2 Consumo total\r\n  const rawConsumption = input?.tsl_wo_work_order_attribute?.active_energy_consumption;\r\n  const active_energy_consumption = Number(rawConsumption);\r\n  if (isNaN(active_energy_consumption)) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: `Invalid active_energy_consumption value: ${rawConsumption}`,\r\n        status: 'ERROR',\r\n      }\r\n    };\r\n  }\r\n\r\n  // 3 Constante (percentage_rate)\r\n  const rawConstant = input?.percentage_pricing?.percentage_rate;\r\n  if (rawConstant === undefined || rawConstant === null || String(rawConstant).trim() === \"\") {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: 'constant_module_value (percentage_rate) is missing or empty',\r\n        status: 'ERROR',\r\n      }\r\n    };\r\n  }\r\n  const constant_module_value = Number(rawConstant);\r\n  if (isNaN(constant_module_value)) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: `Invalid constant_module_value (not a number): ${rawConstant}`,\r\n        status: 'ERROR',\r\n      }\r\n    };\r\n  }\r\n\r\n  // 4 Precios (desde custom_graduated_pricing_with_percentage)\r\n  const prices = Array.isArray(input?.custom_graduated_pricing_with_percentage?.prices)\r\n    ? input.custom_graduated_pricing_with_percentage.prices\r\n    : [];\r\n  if (prices.length === 0) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: 'No prices found in custom_graduated_pricing_with_percentage.prices',\r\n        status: 'ERROR',\r\n      }\r\n    };\r\n  }\r\n\r\n  const filteredRanges = prices\r\n    .filter(r => r.code === billingItemCode)\r\n    .sort((a, b) => Number(a.interval_high ?? 0) - Number(b.interval_high ?? 0))\r\n    .map(r => ({\r\n      limite: Number(r.interval_high) === 999999999 || r.interval_high == null ? 999999999 : Number(r.interval_high),\r\n      precio: Number(r.base_price),\r\n      porcentaje: (() => {\r\n        const num = Number(r.percentage);\r\n        return isNaN(num) ? NaN : (num > 1 ? num / 100 : num);\r\n      })()\r\n    }));\r\n\r\n  if (filteredRanges.length === 0) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: `No matching prices found for billingItemCode '${billingItemCode}'`,\r\n        status: 'ERROR',\r\n      }\r\n    };\r\n  }\r\n\r\n  // 5 Seleccionar rango según importe\r\n  let limite_anterior = 0;\r\n  let i = 0;\r\n  for (; i < filteredRanges.length; i++) {\r\n    const rango = filteredRanges[i];\r\n    if (\r\n      (active_energy_amount >= limite_anterior && active_energy_amount <= rango.limite && rango.limite !== 999999999) ||\r\n      (active_energy_amount >= limite_anterior && rango.limite === 999999999)\r\n    ) {\r\n      break;\r\n    }\r\n    limite_anterior = rango.limite;\r\n  }\r\n  if (i >= filteredRanges.length) i = filteredRanges.length - 1;\r\n  const rangoSeleccionado = filteredRanges[i];\r\n\r\n  // 6 Aplicar la fórmula\r\n  let importe_alumbrado = 0;\r\n  if (\r\n    (active_energy_consumption <= constant_module_value) ||\r\n    (rangoSeleccionado.precio > active_energy_amount * rangoSeleccionado.porcentaje)\r\n  ) {\r\n    importe_alumbrado = rangoSeleccionado.precio;\r\n  } else {\r\n    importe_alumbrado = active_energy_amount * rangoSeleccionado.porcentaje;\r\n  }\r\n  //Asignar el importe \r\n  const billingItems = input.tsl_wo_work_order_attribute.billing_items.public_lighting_billing_items;\r\n  const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\r\n\r\n  if (!billingItem) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'The parameter_billingItem_code ' + billingItemCode + ' could not be found in the billing concepts structure',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  }\r\n  billingItem.billing_item_amount = importe_alumbrado;\r\n\r\n  // 8 Retorno\r\n  return {\r\n    ...input,\r\n    result: {\r\n      total_amount: importe_alumbrado,\r\n      status: 'OK',\r\n      rule_description: 'Public lighting amount calculation rule completed',\r\n    },\r\n  };\r\n};\r\n",
+        "omitNodes": false
+      },
+      "id": "21881e91-7e68-4a66-8792-5f6db55ace87",
+      "name": "Calculate amount",
+      "position": {
+        "x": 745,
+        "y": 0
+      }
+    },
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "39d6fc9d-0cba-453d-b426-908d5bd710c6",
+      "name": "request",
+      "position": {
+        "x": 445,
+        "y": 0
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "8029b5f5-6a1f-4946-a4ad-236048444215",
+      "sourceId": "21881e91-7e68-4a66-8792-5f6db55ace87",
+      "targetId": "5d8bc9d0-c2a8-4329-b2aa-0c3ae29e8c65",
+      "type": "edge"
+    },
+    {
+      "id": "6649c504-470e-4f56-92ea-0fff6f2ab085",
+      "sourceId": "39d6fc9d-0cba-453d-b426-908d5bd710c6",
+      "targetId": "21881e91-7e68-4a66-8792-5f6db55ace87",
+      "type": "edge"
+    }
+  ]
+}

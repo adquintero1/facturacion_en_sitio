@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "8b8eb149-520d-4736-8a5b-b56d86d42c92",
+      "name": "request",
+      "position": {
+        "x": 435,
+        "y": 75
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "97248265-1938-41a9-bb86-91aecad5eb84",
+      "name": "response",
+      "position": {
+        "x": 950,
+        "y": 75
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n  const basePrice = parseFloat(input?.standard_pricing?.price ?? 0);\n  const measuredPower = parseFloat(input?.tsl_wo_work_order_attribute?.measured_power?.power);\n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Demanda not found\"\n      }\n    }\n  }\n\n  let total_amount = basePrice * measuredPower;\n\n if (total_amount) {\n    const billingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    billingItem.billing_item_amount = total_amount;\n\n    return {\n      ...input,\n      result: {\n          total_amount: total_amount,\n          status: \"OK\",\n          status_description: \"Demanda calculation rule completed\"\n        }\n    };\n  } else {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"The amount of the demanda rule could not be calculated.\"\n      }\n    };\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "d4e2a056-5a29-4514-a504-34476a6b4185",
+      "name": "Calculate amount",
+      "position": {
+        "x": 690,
+        "y": 75
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "7f614009-49c7-4af0-9947-c012b471368e",
+      "sourceId": "8b8eb149-520d-4736-8a5b-b56d86d42c92",
+      "targetId": "d4e2a056-5a29-4514-a504-34476a6b4185",
+      "type": "edge"
+    },
+    {
+      "id": "da087373-0659-4df1-9df9-c70cac5b195a",
+      "sourceId": "d4e2a056-5a29-4514-a504-34476a6b4185",
+      "targetId": "97248265-1938-41a9-bb86-91aecad5eb84",
+      "type": "edge"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "2d63b257-2ec7-461f-b10c-4e63aed77c4a",
+      "name": "request",
+      "position": {
+        "x": 370,
+        "y": 255
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "7bd29601-b63d-4693-b4fb-d1555b0145aa",
+      "name": "response",
+      "position": {
+        "x": 895,
+        "y": 255
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const parameterBillingItemCodeForAmount = input?.parametros_de_la_regla?.parameter_billingItem_code_for_amount;\n  const activeEnergyBillingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n  const consumo = activeEnergyBillingItems.find(item => item.legacy_billing_item_id === parameterBillingItemCodeForAmount);\n\n  const active_energy_consumption = Number(input?.tsl_wo_work_order_attribute?.active_energy_consumption ?? 0);\n\n  const percentage = parseFloat(input.custom_graduated_pricing_and_unique_percentage.percentage);\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule Alumbrado publico-Porcentaje fijo de importe con importe maximo not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  \n  \n\n  // Fuente ÚNICA: arreglo de rangos\n  const prices = Array.isArray(input?.custom_graduated_pricing_and_unique_percentage?.prices)\n    ? input.custom_graduated_pricing_and_unique_percentage.prices\n    : [];\n\n  // Ordena por límite superior ascendente y mapea a {limite, precio}\n  const filteredRanges = prices\n    .slice()\n    .sort(\n      (a, b) =>\n        Number(a.interval_high ?? 0) -\n        Number(b.interval_high ?? 0)\n    )\n    .map((r) => ({\n      limite:\n        Number(r.interval_high) === 999999999 ||\n        r.interval_high == null\n          ? 999999999\n          : Number(r.interval_high),\n      precio: Number(r.base_price),\n    }));\n\n  if (filteredRanges.length === 0) {\n    return {\n      ...input,\n      result: {\n        rule_description: 'Rate prices for Alumbrado publico-Porcentaje fijo de importe con importe maximo not found',\n        status: 'ERROR',\n      }\n    };\n  }\n\n  let importe_alumbrado = 0;\n  let limite_anterior = 0;\n  let i = 0;\n\n  for (; i < filteredRanges.length; i++) {\n    const rango = filteredRanges[i];\n\n    if (\n      active_energy_consumption >= limite_anterior &&\n      active_energy_consumption <= rango.limite &&\n      rango.limite !== 999999999\n    ) {\n      break;\n    } else if (\n      active_energy_consumption >= limite_anterior &&\n      rango.limite === 999999999\n    ) {\n      break;\n    }\n\n    limite_anterior = rango.limite;\n  }\n\n  // Fallback si no se encontró (por si el consumo es mayor al último límite finito)\n  if (i >= filteredRanges.length) i = filteredRanges.length - 1;\n\n\n  if ( percentage * (consumo.billing_item_amount / 100) < filteredRanges[i].precio ) {\n    importe_alumbrado = percentage * (consumo.billing_item_amount / 100);\n  } else {\n    importe_alumbrado = filteredRanges[i].precio\n  };\n\n  const billingItems = input.tsl_wo_work_order_attribute.billing_items.public_lighting_billing_items;\n  const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n\n  if (!billingItem) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'The parameter_billingItem_code ' + billingItemCode + ' could not be found in the billing concepts structure',\n          status: 'ERROR',\n        }\n    };\n  }\n  billingItem.billing_item_amount = importe_alumbrado;\n\n  return {\n    ...input,\n    result: {\n      total_amount: importe_alumbrado,\n      status: 'OK',\n      rule_description:\n        'Alumbrado publico-Porcentaje fijo de importe con importe maximo calculation rule completed',\n    },\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "715476ca-0df4-4207-9f77-f578927495e8",
+      "name": "Calculate amount",
+      "position": {
+        "x": 635,
+        "y": 255
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "f601b054-1838-4822-adf7-84a6cd0b1994",
+      "sourceId": "2d63b257-2ec7-461f-b10c-4e63aed77c4a",
+      "targetId": "715476ca-0df4-4207-9f77-f578927495e8",
+      "type": "edge"
+    },
+    {
+      "id": "3dc216ae-c233-4e19-89ee-7f793cb225cd",
+      "sourceId": "715476ca-0df4-4207-9f77-f578927495e8",
+      "targetId": "7bd29601-b63d-4693-b4fb-d1555b0145aa",
+      "type": "edge"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "a67bf8e3-1cd4-41c0-85a2-d306cab8e028",
+      "name": "request",
+      "position": {
+        "x": 380,
+        "y": 215
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "08cc56b2-1f87-4888-899e-eea2b37cbe38",
+      "name": "response",
+      "position": {
+        "x": 930,
+        "y": 215
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Alumbrado publico-Precio por rangos de consumo not found\"\n      }\n    }\n  }\n\n  const parameterBillingItemCodeForAmount = input?.parametros_de_la_regla?.parameter_billingItem_code_for_amount;\n  const activeEnergyBillingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n  const consumo = activeEnergyBillingItems.find(item => item.legacy_billing_item_id === parameterBillingItemCodeForAmount);\n\n  const percentagePricing = parseFloat(input.percentage_pricing.percentage_rate); \n\n  let totalAmount = (percentagePricing/100) * consumo.billing_item_amount;\n\n\n if (totalAmount != null) {\n    const billingItems = input.tsl_wo_work_order_attribute.billing_items.public_lighting_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    billingItem.billing_item_amount = totalAmount;\n\n    return {\n      ...input,\n      result: {\n          total_amount: totalAmount,\n          status: \"OK\",\n          status_description: \"Alumbrado publico-Porcentaje fijo calculation rule completed\"\n        }\n    };\n  } else {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"The amount of the Alumbrado publico-Porcentaje fijo rule could not be calculated.\"\n      }\n    };\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "345f5efd-d899-47dc-8773-531c5d4944f6",
+      "name": "Calculate amount",
+      "position": {
+        "x": 650,
+        "y": 215
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "e8f94051-7110-48c6-8ce1-72ec1511d0bf",
+      "sourceId": "a67bf8e3-1cd4-41c0-85a2-d306cab8e028",
+      "targetId": "345f5efd-d899-47dc-8773-531c5d4944f6",
+      "type": "edge"
+    },
+    {
+      "id": "9bbef44b-6955-4d8b-b59a-1548dfab221b",
+      "sourceId": "345f5efd-d899-47dc-8773-531c5d4944f6",
+      "targetId": "08cc56b2-1f87-4888-899e-eea2b37cbe38",
+      "type": "edge"
+    }
+  ]
+}

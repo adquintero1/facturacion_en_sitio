@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "ba6f07c5-26ce-4920-a89f-f61ad0d16d75",
+      "name": "request",
+      "position": {
+        "x": 250,
+        "y": 255
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // ----------------------------\n  // 0. Validación: que exista un concepto a calcular\n  // ----------------------------\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode === \"null\" || billingItemCode.trim() === \"\") {\n    return {\n      ...input,\n      result: {\n        rule_description: `parameter_billingItem_code for rule Alumbrado publico-Precio por rangos consumo y porcentaje fijo de importe not found`,\n        status: 'ERROR',\n      }\n    };\n  }\n\n  // ----------------------------\n  // 1. Obtener consumo y monto base\n  // ----------------------------\n  const parameterBillingItemCodeForAmount = input?.parametros_de_la_regla?.parameter_billingItem_code_for_amount;\n  const active_energy_consumption = parseFloat(input.tsl_wo_work_order_attribute.active_energy_consumption ?? 0);\n\n  const billingItemsActiveEnergy = input.tsl_wo_work_order_attribute?.billing_items?.active_energy_billing_items ?? [];\n  const active_energy_item = billingItemsActiveEnergy.find(item => item.print_description.toLowerCase() === parameterBillingItemCodeForAmount);\n  const active_energy_amount = active_energy_item ? parseFloat(active_energy_item.billing_item_amount) : 0;\n\n  // ----------------------------\n  // 2. Extraer rangos de porcentaje\n  // ----------------------------\n  const percentagePricing = input?.graduated_percentage_pricing?.percentages ?? [];\n  const filteredRanges = percentagePricing\n    .sort((a, b) => parseFloat(a.interval_high) - parseFloat(b.interval_high))\n    .map(r => ({\n      limite: parseFloat(r.interval_high),\n      precio: parseFloat(input.graduated_percentage_pricing.price_for_unit ?? 0),\n      porcentaje: parseFloat(r.percentage ?? 0)\n    }));\n\n  if (filteredRanges.length === 0) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: `No percentage ranges found for billing item code ${billingItemCode}`\n      }\n    };\n  }\n\n  // ----------------------------\n  // 3. Calcular importe según bloque\n  // ----------------------------\n  let importe_alumbrado = 0;\n  let limite_anterior = 0;\n  let i;\n\n  for (i = 0; i < filteredRanges.length; i++) {\n    if (active_energy_consumption >= limite_anterior && active_energy_consumption <= filteredRanges[i].limite) {\n      break;\n    }\n    limite_anterior = filteredRanges[i].limite;\n  }\n\n  if (limite_anterior === 0) {\n    importe_alumbrado = filteredRanges[i].precio; // Precio fijo para el primer bloque\n  } else {\n    importe_alumbrado = active_energy_amount * (filteredRanges[i].porcentaje / 100);\n  }\n\n  // ----------------------------\n  // 4. Actualizar billing_item_amount en active_energy_billing_items\n  // ----------------------------\n  const alumbradoItem = billingItemsActiveEnergy.find(item => item.legacy_billing_item_id === billingItemCode);\n  if (alumbradoItem) {\n    alumbradoItem.billing_item_amount = importe_alumbrado;\n  } else {\n    // Si no existe, lo agregamos al final\n    billingItemsActiveEnergy.push({\n      legacy_billing_item_id: billingItemCode,\n      billing_item_amount: importe_alumbrado,\n      is_calculate: \"true\",\n      print_order: billingItemsActiveEnergy.length + 1,\n      print_description: \"Calculo importe alumbrado publico\"\n    });\n  }\n\n  // ----------------------------\n  // 5. También actualizar en public_lighting_billing_items si quieres mantener consistencia\n  // ----------------------------\n  const billingItemsPublicLighting = input.tsl_wo_work_order_attribute?.billing_items?.public_lighting_billing_items ?? [];\n  const publicLightingItem = billingItemsPublicLighting.find(item => item.legacy_billing_item_id === billingItemCode);\n  if (publicLightingItem) {\n    publicLightingItem.billing_item_amount = importe_alumbrado;\n  }\n\n  // ----------------------------\n  // 6. Resultado\n  // ----------------------------\n  return {\n    ...input,\n    result: {\n      total_amount: importe_alumbrado,\n      status: \"OK\",\n      status_description: \"Cálculo de Alumbrado Público-Precio por rangos consumo y porcentaje fijo de importe calculation method completed\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "4ad2a579-debd-42ce-b3ac-3d83a3251824",
+      "name": "Calculate ammount",
+      "position": {
+        "x": 550,
+        "y": 255
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "63db3067-d804-4a59-876c-ab639146f39f",
+      "name": "response",
+      "position": {
+        "x": 895,
+        "y": 255
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "111d2a45-db1e-4022-8c57-7834bd059d5e",
+      "sourceId": "ba6f07c5-26ce-4920-a89f-f61ad0d16d75",
+      "targetId": "4ad2a579-debd-42ce-b3ac-3d83a3251824",
+      "type": "edge"
+    },
+    {
+      "id": "2e0a63bd-212f-45bf-8386-fdb1d266c330",
+      "sourceId": "4ad2a579-debd-42ce-b3ac-3d83a3251824",
+      "targetId": "63db3067-d804-4a59-876c-ab639146f39f",
+      "type": "edge"
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+    "parametros_de_la_regla":{
+       "parameter_billingItem_code":"alumbrado_publico",
+       "parameter_billingItem_code_for_amount":"consumo"
+    }
+ }

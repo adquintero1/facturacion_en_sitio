@@ -1,0 +1,7 @@
+{
+    "parametros_de_la_regla":{
+        "parameter_billingItem_code" : "madres_comunitarias",
+        "parameter_billingItem_code_for_amount": "consumo",
+        "parameter_billingItem_code_for_subsidy": "subsidio"
+    }
+}

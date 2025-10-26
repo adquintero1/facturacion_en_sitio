@@ -1,0 +1,8 @@
+{
+    "parametros_de_la_regla":{
+        "parameter_billingItem_code": "iva",
+        "valid_concept_codes_for_sum_of_amounts": [
+            "cargo_fijo", "consumo"
+        ]
+    }
+}

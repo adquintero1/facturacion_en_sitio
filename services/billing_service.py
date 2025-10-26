@@ -2,7 +2,7 @@
 Servicio principal para el procesamiento de facturación
 """
 import asyncio
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import logging
 from datetime import datetime
 
@@ -227,29 +227,79 @@ class BillingService:
                     
                     # Procesar con reglas
                     rule_processing = await self.billing_processor.process_billing_result(api_result)
+
+                    final_execution_payload = rule_processing.get("final_execution_payload")
+                    final_context_used = rule_processing.get("final_context_used")
+                    rule_name = rule_processing.get("final_rule_name", "N/A")
+                    second_phase_success = rule_processing.get("success", False)
+
+                    if second_phase_success:
+                        second_phase_result = final_execution_payload or {}
+                        if final_context_used and isinstance(second_phase_result, dict):
+                            second_phase_result.setdefault("context", final_context_used)
+                    else:
+                        failure_payload = final_execution_payload or {}
+                        second_phase_result = {
+                            "success": False,
+                            "error": failure_payload.get("error"),
+                            "details": failure_payload.get("details"),
+                            "context": failure_payload.get("context") or failure_payload.get("context_used") or final_context_used
+                        }
                     
-                    # Obtener resultado de la segunda ejecución de API (con reglas)
-                    rule_result = rule_processing.get("rule_result", {})
-                    api_execution_result = rule_result.get("api_execution_result", {})
-                    second_api_result = api_execution_result.get("api_result", {})
+                    concept_processing = None
+                    third_phase_result = None
+                    third_phase_success: Optional[bool] = None
+                    third_phase_rule = None
                     
-                    # Simplificar resultado - mantener ambos api_result
+                    if second_phase_success:
+                        concept_processing = await self.billing_processor.process_concept_chain(rule_processing)
+                        third_phase_success = concept_processing.get("success", False)
+                        third_phase_rule = concept_processing.get("final_rule_name", "N/A")
+                        
+                        if third_phase_success:
+                            third_phase_result = concept_processing.get("final_execution_payload") or {}
+                            final_context_phase3 = concept_processing.get("final_context_used")
+                            if final_context_phase3 and isinstance(third_phase_result, dict):
+                                third_phase_result.setdefault("context", final_context_phase3)
+                        else:
+                            failure_payload_phase3 = concept_processing.get("final_execution_payload") or {}
+                            third_phase_result = {
+                                "success": False,
+                                "error": failure_payload_phase3.get("error") or concept_processing.get("error"),
+                                "details": failure_payload_phase3.get("details"),
+                                "context": failure_payload_phase3.get("context") or concept_processing.get("final_context_used")
+                            }
+                    else:
+                        third_phase_success = None
+                    
+                    order_success = second_phase_success and (third_phase_success if third_phase_success is not None else True)
+                    final_api_execution_success = third_phase_success if third_phase_success is not None else second_phase_success
+                    
                     massive_results.append({
                         "order_index": i,
                         "first_api_result": api_result,  # Primera ejecución (inicial)
-                        "second_api_result": second_api_result,  # Segunda ejecución (con reglas)
-                        "success": rule_processing.get("success", False),
-                        "rule_name": rule_result.get("rule_name", "N/A"),
-                        "api_execution_success": api_execution_result.get("success", False)
+                        "second_api_result": second_phase_result,  # Resultado fase 2
+                        "third_api_result": third_phase_result,    # Resultado fase 3
+                        "success": order_success,
+                        "rule_name": rule_name,
+                        "second_phase_success": second_phase_success,
+                        "third_phase_success": third_phase_success,
+                        "third_phase_rule_name": third_phase_rule,
+                        "api_execution_success": final_api_execution_success,
+                        "chain_completed": concept_processing.get("chain_completed", False) if concept_processing else rule_processing.get("chain_completed", False)
                     })
                 else:
                     logger.warning(f"⚠️ Orden {i+1} falló en API externa: {api_result.get('error', 'Unknown error')}")
                     massive_results.append({
                         "order_index": i,
                         "first_api_result": api_result,  # Primera ejecución (falló)
-                        "second_api_result": None,  # No hay segunda ejecución
+                        "second_api_result": None,  # No se ejecutó la segunda fase
+                        "third_api_result": None,   # No se ejecutó la tercera fase
                         "success": False,
-                        "error": api_result.get("error", "API execution failed")
+                        "error": api_result.get("error", "API execution failed"),
+                        "api_execution_success": False,
+                        "second_phase_success": None,
+                        "third_phase_success": None
                     })
             
             # Paso 4: Consolidar resultados

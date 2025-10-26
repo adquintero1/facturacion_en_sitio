@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "009e04d3-20ca-4569-a19f-86f8d331420c",
+      "name": "request",
+      "position": {
+        "x": 815,
+        "y": 270
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "8022097d-69bd-41c1-b461-829043b16657",
+      "name": "response",
+      "position": {
+        "x": 1345,
+        "y": 270
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: null,\n      cleaning_billing_items: [],\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.cleaning_billing_items)) {\n    workOrder.billing_items.cleaning_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.cleaning_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"420\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-ASEO\",\n    calculation_method_description:\n      \"Metodo de calculo del subsidio\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ASEO\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-CONCEPTO-ASEO\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
+      "id": "75da0ee2-2acb-4f25-a00b-7beffddbe269",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-ASEO",
+      "position": {
+        "x": 1080,
+        "y": 270
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "7280cac3-033e-4435-8d44-b49d671039e9",
+      "sourceId": "75da0ee2-2acb-4f25-a00b-7beffddbe269",
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
+      "type": "edge"
+    },
+    {
+      "id": "6f8e5e18-36d6-48d0-b851-b225f97f4a26",
+      "sourceId": "009e04d3-20ca-4569-a19f-86f8d331420c",
+      "targetId": "75da0ee2-2acb-4f25-a00b-7beffddbe269",
+      "type": "edge"
+    }
+  ]
+}

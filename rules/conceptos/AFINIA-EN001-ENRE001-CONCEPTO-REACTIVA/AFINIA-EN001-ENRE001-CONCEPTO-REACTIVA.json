@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "e872d25f-3ef3-4dce-b191-84df4d07aee0",
+      "name": "request",
+      "position": {
+        "x": 195,
+        "y": 90
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "eb620902-ad05-4a50-8b5f-bcc07783dcad",
+      "name": "response",
+      "position": {
+        "x": 750,
+        "y": 90
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n  const percentage = parseFloat(input?.custom_graduated_pricing_and_unique_percentage?.percentage);\n  const reactiveEnergyConsumption = parseFloat(input?.tsl_wo_work_order_attribute?.reactive_energy_consumption);\n  const activeEnergyConsumption = parseFloat(input?.tsl_wo_work_order_attribute?.active_energy_consumption);\n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Reactiva not found\"\n      }\n    }\n  }\n\n  let consumptionFactor = activeEnergyConsumption * (percentage/100);\n  let consumptionReactive = reactiveEnergyConsumption - consumptionFactor;\n\n  if (consumptionReactive < 0 ) {\n    consumptionReactive = 0\n  };\n\n\n // Fuente ÚNICA: arreglo de rangos\n  const prices = Array.isArray(input?.custom_graduated_pricing_and_unique_percentage?.prices)\n    ? input.custom_graduated_pricing_and_unique_percentage.prices\n    : [];\n\n  // Ordena por límite superior ascendente y mapea a {limite, precio}\n  const filteredRanges = prices\n    .slice()\n    .sort(\n      (a, b) =>\n        Number(a.interval_high ?? 0) -\n        Number(b.interval_high ?? 0)\n    )\n    .map((r) => ({\n      limite:\n        Number(r.interval_high) === 999999999 ||\n        r.interval_high == null\n          ? 999999999\n          : Number(r.interval_high),\n      precio: Number(r.base_price),\n    }));\n\n  if (filteredRanges.length === 0) {\n    return {\n      ...input,\n      result: {\n        rule_description: 'prices for Reactiva not found',\n        status: 'ERROR',\n      }\n    };\n  }\n\n  let limite_anterior = 0;\n  let i = 0;\n\n  for (; i < filteredRanges.length; i++) {\n    const rango = filteredRanges[i];\n\n    if (\n      consumptionReactive >= limite_anterior &&\n      consumptionReactive <= rango.limite &&\n      rango.limite !== 999999999\n    ) {\n      break;\n    } else if (\n      consumptionReactive >= limite_anterior &&\n      rango.limite === 999999999\n    ) {\n      break;\n    }\n\n    limite_anterior = rango.limite;\n  }\n\n  // Fallback si no se encontró (por si el consumo es mayor al último límite finito)\n  if (i >= filteredRanges.length) i = filteredRanges.length - 1;\n\n  let total_amount = filteredRanges[i].precio * consumptionReactive;\n\n   console.log(filteredRanges[i].precio)\n   console.log(consumptionReactive)\n  console.log(total_amount)\n\n if (total_amount || total_amount == 0 ) {\n    const billingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    billingItem.billing_item_amount = total_amount;\n\n    return {\n      ...input,\n      result: {\n          total_amount: total_amount,\n          status: \"OK\",\n          status_description: \"Reactiva calculation rule completed\"\n        }\n    };\n  } else {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"The amount of the Reactiva rule could not be calculated.\"\n      }\n    };\n  }\n};\n\n\n",
+        "omitNodes": false
+      },
+      "id": "a393bfec-2aad-4892-a283-98015682d770",
+      "name": "Calculate amount",
+      "position": {
+        "x": 465,
+        "y": 90
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "d178f4d0-9dbe-4ee3-ba04-f0caa29154da",
+      "sourceId": "e872d25f-3ef3-4dce-b191-84df4d07aee0",
+      "targetId": "a393bfec-2aad-4892-a283-98015682d770",
+      "type": "edge"
+    },
+    {
+      "id": "b17980b1-1920-4375-b641-39ab514f46eb",
+      "sourceId": "a393bfec-2aad-4892-a283-98015682d770",
+      "targetId": "eb620902-ad05-4a50-8b5f-bcc07783dcad",
+      "type": "edge"
+    }
+  ]
+}

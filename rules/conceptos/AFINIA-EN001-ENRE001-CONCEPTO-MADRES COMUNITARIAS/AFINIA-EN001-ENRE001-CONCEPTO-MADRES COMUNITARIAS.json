@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "50a49b49-5541-44f8-b1f7-8b910ad56b50",
+      "name": "request",
+      "position": {
+        "x": 155,
+        "y": 355
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "2e8bd61c-3290-44ca-9d11-a879a4c5a2b5",
+      "name": "response",
+      "position": {
+        "x": 730,
+        "y": 355
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const active_energy_consumption = Number(input?.tsl_wo_work_order_attribute?.active_energy_consumption ?? 0);\n\n  const parameterBillingItemCodeForSubsidy = input?.parametros_de_la_regla?.parameter_billingItem_code_for_subsidy;\n  const activeEnergyBillingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n  const subsidio = activeEnergyBillingItems.find(item => item.legacy_billing_item_id === parameterBillingItemCodeForSubsidy);\n\n   const percentage = parseFloat(input.custom_graduated_pricing_and_unique_percentage.percentage); \n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Madres comunitarias not found\"\n      }\n    }\n  }\n\n\n  // Fuente ÚNICA: arreglo de rangos\n  const prices = Array.isArray(input?.custom_graduated_pricing_and_unique_percentage?.prices)\n    ? input.custom_graduated_pricing_and_unique_percentage.prices\n    : [];\n\n  // Ordena por límite superior ascendente y mapea a {limite, precio}\n  const filteredRanges = prices\n    .slice()\n    .sort(\n      (a, b) =>\n        Number(a.interval_high ?? 0) -\n        Number(b.interval_high ?? 0)\n    )\n    .map((r) => ({\n      limite:\n        Number(r.interval_high) === 999999999 ||\n        r.interval_high == null\n          ? 999999999\n          : Number(r.interval_high),\n      precio: Number(r.base_price),\n    }));\n\n  if (filteredRanges.length === 0) {\n    return {\n      ...input,\n      result: {\n        rule_description: 'Rate prices for Madres comunitarias not found',\n        status: 'ERROR',\n      }\n    };\n  }\n\n  let costo = 0;\n\n  if (filteredRanges.length > 0) {\n    \n    let consumo_restante = active_energy_consumption;\n    let limite_anterior = 0;\n\n    for (const rango of filteredRanges) {\n      if (consumo_restante <= 0) break; // Si ya cubrimos el consumo, terminamos\n\n      let consumo_rango = 0;\n\n      if (rango.limite !== null && rango.limite !== 999999999) {\n        consumo_rango = Math.min(consumo_restante, rango.limite - limite_anterior);\n      } else {\n        consumo_rango = consumo_restante; // Último rango sin límite\n      }\n\n      costo += consumo_rango * rango.precio;\n      consumo_restante -= consumo_rango;\n      limite_anterior = rango.limite;\n    }\n  };\n  let importeConsumoDescuento = costo * (percentage/100);\n  let importeSubidioDescuento = subsidio.billing_item_amount * (percentage/100);\n\n  let totalAmount = (importeConsumoDescuento + importeSubidioDescuento) * (-1);\n\n\n if (totalAmount) {\n    const billingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    billingItem.billing_item_amount = totalAmount;\n\n    return {\n      ...input,\n      result: {\n          total_amount: totalAmount,\n          status: \"OK\",\n          status_description: \"Madres comunitarias calculation rule completed\"\n        }\n    };\n  } else {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"The amount of the Madres comunitarias rule could not be calculated.\"\n      }\n    };\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "63dbde79-8784-45eb-ac72-22917376dd7d",
+      "name": "Calculate amount",
+      "position": {
+        "x": 440,
+        "y": 355
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "42ed1288-51dd-4981-98db-2bbaecb3e257",
+      "sourceId": "50a49b49-5541-44f8-b1f7-8b910ad56b50",
+      "targetId": "63dbde79-8784-45eb-ac72-22917376dd7d",
+      "type": "edge"
+    },
+    {
+      "id": "be942786-7094-41cc-9df9-c46c6c4ee142",
+      "sourceId": "63dbde79-8784-45eb-ac72-22917376dd7d",
+      "targetId": "2e8bd61c-3290-44ca-9d11-a879a4c5a2b5",
+      "type": "edge"
+    }
+  ]
+}

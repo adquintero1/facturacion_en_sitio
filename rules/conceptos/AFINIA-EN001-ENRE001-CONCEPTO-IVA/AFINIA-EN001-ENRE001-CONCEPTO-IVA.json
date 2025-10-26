@@ -1,0 +1,75 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "f1699a4d-9d83-49ca-a29a-0bfcafeab1e9",
+      "name": "request",
+      "position": {
+        "x": 790,
+        "y": 185
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "699f1bec-731a-4399-bedb-26733025a577",
+      "name": "response",
+      "position": {
+        "x": 1610,
+        "y": 185
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  \n  \n  const sumaDeImportes = input.suma_de_importes;\n  const iva = parseFloat(input.percentage_pricing.percentage_rate);\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Alumbrado publico-Precio por rangos de consumo not found\"\n      }\n    }\n  }\n\n     const billingItems = input.tsl_wo_work_order_attribute.billing_items.active_energy_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    \n \n  \n  if (iva == 0) {\n    billingItem.billing_item_amount = 0;\n    return {\n      ...input,\n      result: {\n        total_amount: 0,\n        status_description: \"IVA paramter is zero\",\n        status: \"WARNING\"\n      }\n    };\n  } else if (sumaDeImportes == 0) {\n    billingItem.billing_item_amount = 0;\n    return {\n      ...input,\n      result: {\n        total_amount: 0,\n        status_description: \"not exist concepts amount\",\n        status: \"ERROR\"\n      }\n    };\n  } else {\n    const total_amount = sumaDeImportes * (iva/100)\n    billingItem.billing_item_amount = total_amount;\n    return {\n      ...input,\n      result: {\n        total_amount: total_amount,\n        status_description: \"IVA amount calculation rule completed\",\n        status: \"OK\"\n      }\n    };\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "ea7858cb-87b0-4483-8bd4-8866f0948c34",
+      "name": "calculate amount",
+      "position": {
+        "x": 1330,
+        "y": 185
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  // Lista de códigos válidos\n  const validCodes =\n    input?.parametros_de_la_regla?.valid_concept_codes_for_sum_of_amounts ?? [];\n  \n  \n  // Items de energía activa\n  const items =\n    input?.tsl_wo_work_order_attribute?.billing_items?.active_energy_billing_items ?? [];\n  \n\n\n\n  // Acumulador\n  let totalAmount = 0;\n\n  // suma de los importes de los codigos de los conceptos validos\n  validCodes.forEach(code => {\n    // Buscar todos los items con ese código (por si se repite)\n    const matchedItems = items.filter(item => item?.legacy_billing_item_id === code);\n\n    // Sumar los amounts de esos items\n    const sumForCode = matchedItems.reduce(\n      (acc, item) => acc + Number(item?.billing_item_amount ?? 0),\n      0\n    );\n\n    // Acumular al total general\n    totalAmount += sumForCode;\n\n  });\n\n\n  return {\n    ...input,\n    suma_de_importes : totalAmount\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "bb599235-a576-4110-9413-524fb32e868c",
+      "name": "suma de importes",
+      "position": {
+        "x": 1060,
+        "y": 185
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "bb0bc785-8f56-4793-a8bc-6c69af576e94",
+      "sourceId": "bb599235-a576-4110-9413-524fb32e868c",
+      "targetId": "ea7858cb-87b0-4483-8bd4-8866f0948c34",
+      "type": "edge"
+    },
+    {
+      "id": "39e8e8b5-834b-4673-aed4-afbbb6c2b248",
+      "sourceId": "f1699a4d-9d83-49ca-a29a-0bfcafeab1e9",
+      "targetId": "bb599235-a576-4110-9413-524fb32e868c",
+      "type": "edge"
+    },
+    {
+      "id": "be5c116c-bb88-41ac-bad2-e9bfcc398a87",
+      "sourceId": "ea7858cb-87b0-4483-8bd4-8866f0948c34",
+      "targetId": "699f1bec-731a-4399-bedb-26733025a577",
+      "type": "edge"
+    }
+  ]
+}

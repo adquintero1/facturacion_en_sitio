@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "0aefab69-854f-4f8d-8cb6-f965bf6250af",
+      "name": "request",
+      "position": {
+        "x": 510,
+        "y": 185
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "8221c9bb-6b4d-4cfc-81b7-7613370f4ee6",
+      "name": "response",
+      "position": {
+        "x": 1060,
+        "y": 185
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n  const basePrice = parseFloat(input?.standard_pricing?.price ?? 0);\n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Alumbrado publico-Precio por rangos de consumo not found\"\n      }\n    }\n  }\n\n if (basePrice != null) {\n    const billingItems = input.tsl_wo_work_order_attribute.billing_items.public_lighting_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    billingItem.billing_item_amount = basePrice;\n\n    return {\n      ...input,\n      result: {\n          total_amount: basePrice,\n          status: \"OK\",\n          status_description: \"Alumbrado publico-Precio fijo calculation rule completed\"\n        }\n    };\n  } else {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"The amount of the Alumbrado publico-Precio fijo rule could not be calculated.\"\n      }\n    };\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "7f02235b-b92b-4823-977d-cf15129f9329",
+      "name": "calculate amount",
+      "position": {
+        "x": 785,
+        "y": 185
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "4fc22ad2-7236-48c5-82b8-594be3ce0517",
+      "sourceId": "0aefab69-854f-4f8d-8cb6-f965bf6250af",
+      "targetId": "7f02235b-b92b-4823-977d-cf15129f9329",
+      "type": "edge"
+    },
+    {
+      "id": "195fd10e-39c5-4deb-b8db-4fa025b40172",
+      "sourceId": "7f02235b-b92b-4823-977d-cf15129f9329",
+      "targetId": "8221c9bb-6b4d-4cfc-81b7-7613370f4ee6",
+      "type": "edge"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "c9ac00ac-e1d1-4e8b-8677-cace97f7285a",
+      "name": "request",
+      "position": {
+        "x": 160,
+        "y": 230
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "c45bf4bb-9380-4957-811b-6d5b5d9e0a98",
+      "name": "response",
+      "position": {
+        "x": 715,
+        "y": 230
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;  \n  const basePrice = parseFloat(input?.standard_pricing?.price ?? 0);\n\n  console.log(billingItemCode)\n\n  if (!billingItemCode) {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"parameter_billingItem_code for rule Aseo not found\"\n      }\n    }\n  }\n\n if (basePrice != null) {\n    const billingItems = input.tsl_wo_work_order_attribute.billing_items.cleaning_billing_items;\n    const billingItem = billingItems.find(item => item.legacy_billing_item_id === billingItemCode);\n    billingItem.billing_item_amount = basePrice;\n\n    return {\n      ...input,\n      result: {\n          total_amount: basePrice,\n          status: \"OK\",\n          status_description: \"Aseo calculation rule completed\"\n        }\n    };\n  } else {\n    return {\n      ...input,\n      result: {\n        status: \"ERROR\",\n        status_description: \"The amount of the Aseo rule could not be calculated.\"\n      }\n    };\n  }\n};\n",
+        "omitNodes": false
+      },
+      "id": "b2c4ce43-e780-4489-9306-0c70ed966c5c",
+      "name": "Calculate amount",
+      "position": {
+        "x": 425,
+        "y": 230
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "c293f52e-cb40-4dbe-94ff-514c10a1b7c8",
+      "sourceId": "c9ac00ac-e1d1-4e8b-8677-cace97f7285a",
+      "targetId": "b2c4ce43-e780-4489-9306-0c70ed966c5c",
+      "type": "edge"
+    },
+    {
+      "id": "2910d135-0074-4ac4-b879-bb9660eda42d",
+      "sourceId": "b2c4ce43-e780-4489-9306-0c70ed966c5c",
+      "targetId": "c45bf4bb-9380-4957-811b-6d5b5d9e0a98",
+      "type": "edge"
+    }
+  ]
+}
