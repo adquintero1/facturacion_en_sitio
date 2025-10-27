@@ -63,6 +63,10 @@ class BillingProcessor:
             
             # Procesar cada tipo de billing_items
             for billing_type, type_name in billing_types:
+                # Temporal: limitar fase 3 a energía activa
+                if billing_type != "active_energy_billing_items":
+                    logger.info(f"⏭️ Fase 3: se omite {type_name} (limitación temporal)")
+                    continue
                 items = billing_items.get(billing_type, [])
                 
                 if not items:
@@ -164,19 +168,15 @@ class BillingProcessor:
             logger.info("🔄 Iniciando fase 3 de procesamiento de conceptos...")
             
             # Tomar como punto de partida el input final utilizado en la fase 2
-            final_context = phase_two_result.get("final_context_used") or {}
-            
-            if final_context and isinstance(final_context, dict):
-                context_clone = self._clone_context(final_context)
-            else:
-                context_clone = {}
-            
-            current_tsl_attr = context_clone.get("tsl_wo_work_order_attribute") or phase_two_result.get("final_tsl_attributes")
+            api_result = phase_two_result.get("api_result")
+            base_tsl_attr = self._extract_tsl_attribute(api_result or {}) if isinstance(phase_two_result, dict) else None
+            current_tsl_attr = base_tsl_attr or phase_two_result.get("final_tsl_attributes")
             
             if not current_tsl_attr:
                 return {"success": False, "error": "No se encontró tsl_wo_work_order_attribute para iniciar la fase 3"}
             
             current_context: Dict[str, Any] = {"tsl_wo_work_order_attribute": current_tsl_attr}
+            baseline_billing_items = self._clone_context(current_tsl_attr.get("billing_items", {}))
             
             billing_items = current_tsl_attr.get("billing_items", {})
             if not billing_items:
@@ -194,8 +194,6 @@ class BillingProcessor:
             final_rule_name = None
             final_api_success = False
             chain_broken = False
-            processed_items_phase3 = 0
-            max_items_phase3 = 1
             
             for billing_type, type_name in billing_types:
                 items = billing_items.get(billing_type, [])
@@ -206,17 +204,17 @@ class BillingProcessor:
                 sorted_items = sorted(items, key=lambda x: x.get("calculation_order", 999))
                 
                 for item in sorted_items:
-                    if processed_items_phase3 >= max_items_phase3:
-                        logger.info("⏸ Fase 3: límite temporal alcanzado, se detiene la cadena para pruebas")
-                        break
-                    
                     if chain_broken:
                         logger.warning("⛔ Fase 3: cadena detenida por error previo, se omiten items restantes")
                         break
+
+                    self._enrich_billing_item_with_baseline(item, billing_type, baseline_billing_items)
+                    if not self._get_calculation_method_code(item):
+                        logger.info(f"⛔ Fase 3: billing_item '{item.get('billing_item_code')}' sin calculation_method, se omite")
+                        continue
                     
                     concept_result = await self._execute_concept_rule(item, current_context)
                     total_processed += 1
-                    processed_items_phase3 += 1
                     
                     if concept_result.get("success", False):
                         updated_tsl_attr = concept_result.get("updated_tsl_attr")
@@ -243,9 +241,6 @@ class BillingProcessor:
                         logger.error(f"❌ Fase 3: error ejecutando regla {final_rule_name}")
                 
                 if chain_broken:
-                    break
-                
-                if processed_items_phase3 >= max_items_phase3:
                     break
             
             if total_processed == 0:
@@ -320,11 +315,14 @@ class BillingProcessor:
                         for prev_item in prev_items:
                             if isinstance(prev_item, dict):
                                 prev_map[prev_item.get("billing_item_code")] = prev_item
+                    updated_codes = set()
                     for item in items:
                         if not isinstance(item, dict):
                             merged_list.append(item)
                             continue
                         code = item.get("billing_item_code")
+                        if code:
+                            updated_codes.add(code)
                         base = prev_map.get(code, {})
                         merged_item = self._clone_context(base)
                         merged_item.update(item)
@@ -336,6 +334,9 @@ class BillingProcessor:
                         if base and base.get("legacy_billing_item_id") and not merged_item.get("legacy_billing_item_id"):
                             merged_item["legacy_billing_item_id"] = base["legacy_billing_item_id"]
                         merged_list.append(merged_item)
+                    for code, prev_item in prev_map.items():
+                        if code not in updated_codes:
+                            merged_list.append(self._clone_context(prev_item))
                     merged_billing[category] = merged_list
                 else:
                     merged_billing[category] = items
@@ -345,11 +346,41 @@ class BillingProcessor:
         
         return merged
     
+    def _enrich_billing_item_with_baseline(
+        self,
+        item: Dict[str, Any],
+        billing_type: str,
+        baseline_billing_items: Dict[str, Any]
+    ) -> None:
+        """Completa información faltante del billing_item desde los datos originales."""
+        if not isinstance(item, dict) or not isinstance(baseline_billing_items, dict):
+            return
+        
+        baseline_list = baseline_billing_items.get(billing_type)
+        if not isinstance(baseline_list, list):
+            return
+        
+        code = item.get("billing_item_code")
+        baseline_item = next(
+            (bi for bi in baseline_list if isinstance(bi, dict) and bi.get("billing_item_code") == code),
+            None
+        )
+        if not baseline_item:
+            return
+        
+        if not item.get("prices_and_method") and baseline_item.get("prices_and_method"):
+            item["prices_and_method"] = self._clone_context(baseline_item["prices_and_method"])
+        if not item.get("calculation_method") and baseline_item.get("calculation_method"):
+            item["calculation_method"] = self._clone_context(baseline_item["calculation_method"])
+        if not item.get("legacy_billing_item_id") and baseline_item.get("legacy_billing_item_id"):
+            item["legacy_billing_item_id"] = baseline_item["legacy_billing_item_id"]
+    
     def _extract_tsl_attribute(self, api_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:
-        """Extrae tsl_wo_work_order_attribute del resultado de la API"""
+        """Extrae tsl_wo_work_order_attribute del resultado de la API."""
         try:
-            if "data" in api_result and "tsl_wo_work_order_attribute" in api_result["data"]:
-                return api_result["data"]["tsl_wo_work_order_attribute"]
+            data_section = api_result.get("data") if isinstance(api_result, dict) else None
+            if isinstance(data_section, dict) and "tsl_wo_work_order_attribute" in data_section:
+                return self._clone_context(data_section["tsl_wo_work_order_attribute"])
             return None
         except Exception as e:
             logger.error(f"Error extrayendo tsl_attribute: {str(e)}")
@@ -509,8 +540,16 @@ class BillingProcessor:
             api_result = await self.external_client.process_billing_item(new_model)
             
             if api_result.get("success", False):
-                logger.info("✅ Regla ejecutada exitosamente con API externa")
                 updated_tsl_attr = self._extract_tsl_attribute(api_result)
+                if updated_tsl_attr is None:
+                    logger.error("❌ La API externa no retornó tsl_wo_work_order_attribute en data")
+                    return {
+                        "success": False,
+                        "error": "Missing tsl_wo_work_order_attribute",
+                        "details": "La respuesta exitosa de la API no contiene data.tsl_wo_work_order_attribute",
+                        "context_used": new_context
+                    }
+                logger.info("✅ Regla ejecutada exitosamente con API externa")
                 return {
                     "success": True,
                     "api_result": api_result,
@@ -555,7 +594,8 @@ class BillingProcessor:
         Construye el nuevo contexto con la estructura correcta:
         {
             "tsl_wo_work_order_attribute": {...},
-            "parametros_de_la_regla": {...}
+            "parametros_de_la_regla": {...},
+            "{rate_code}": {...}
         }
         
         Args:
@@ -575,7 +615,7 @@ class BillingProcessor:
             else:
                 parametros_aplanados = parametros
             
-            # Cargar precios basado en rate_code
+            # Cargar precios basado en rate_code (lógica original)
             rate_code = tsl_attr.get("rate_code", "residencial")  # Default a residencial
             precios_data = self._load_precios_data(rate_code)
             
@@ -588,6 +628,8 @@ class BillingProcessor:
             logger.info(f"✅ Contexto construido con estructura correcta")
             logger.info(f"📋 tsl_wo_work_order_attribute: {len(tsl_attr)} elementos")
             logger.info(f"📋 parametros_de_la_regla: {list(parametros.keys())}")
+            logger.info(f"📋 Rate code: {rate_code}")
+            logger.info(f"📄 Precios cargados para '{rate_code}': {len(precios_data.get('prices_and_method', []))} items")
             
             return new_context
             

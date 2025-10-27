@@ -46,16 +46,32 @@ def reload_model(new_file_path: str = None) -> Dict[str, Any]:
     return MODEL
 
 # Cargar modelo dinámicamente desde archivo JSON
-MODEL_FILE_PATH = os.path.join(os.path.dirname(__file__), "rules", "tarifas", "residencial", "AFINIA-EN001-ENRE001-TARIFA-RESIDENCIAL.json")
+MODEL_FILE_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "rules",
+    "tarifas",
+    "residencial",
+    "AFINIA-EN001-ENRE001-TARIFA-RESIDENCIAL.json"
+)
 MODEL = load_model_from_json(MODEL_FILE_PATH)
 
-# Mensaje de confirmación
-print(f"✅ MODEL cargado desde: {MODEL_FILE_PATH}")
-print(f"📊 Nodos en el modelo: {len(MODEL.get('nodes', []))}")
-print(f"🔗 Conexiones en el modelo: {len(MODEL.get('edges', []))}")
-
-# Modelo cargado dinámicamente desde archivo JSON
-# El MODEL se carga automáticamente desde: rules/tarifas/AFINIA-EN001-ENRE001-TARIFA-RESIDENCIAL.json
+def load_model_for_rate(rate_code: str) -> Dict[str, Any]:
+    """Carga un modelo de tarifa dinámicamente según rate_code."""
+    sanitized_rate = (rate_code or "").strip().lower() or "residencial"
+    rate_to_filename = {
+        "residencial": "AFINIA-EN001-ENRE001-TARIFA-RESIDENCIAL.json",
+        "comercial": "AFINIA-EN001-ENRE001-TARIFA-COMERCIAL.json",
+        "industrial": "AFINIA-EN001-ENRE001-TARIFA-INDUSTRIAL.json",
+        "oficial": "AFINIA-EN001-ENRE001-TARIFA-OFICIAL.json"
+    }
+    filename = rate_to_filename.get(sanitized_rate)
+    if filename:
+        base_path = os.path.join(os.path.dirname(__file__), "rules", "tarifas", sanitized_rate)
+        model_file = os.path.join(base_path, filename)
+        if os.path.exists(model_file):
+            return load_model_from_json(model_file)
+    # Fallback al modelo por defecto si no existe el específico
+    return MODEL
 
 # Reglas vinculadas comunes
 LINKEDRULES = [
@@ -135,44 +151,31 @@ def process_attribute_value(value: str) -> Any:
         pass
     return value
 
+def _build_entry(context: Dict[str, Any], include_linked_rules: bool) -> Dict[str, Any]:
+    rate_code = (context.get("tsl_wo_work_order_attribute", {}) or {}).get("rate_code")
+    model = load_model_for_rate(rate_code)
+    entry = {
+        "model": model,
+        "context": context
+    }
+    if include_linked_rules:
+        entry["linkedRules"] = LINKEDRULES
+    return entry
+
 def build_custom_response(payload: Any) -> List[Dict[str, Any]]:
     """Construye la respuesta personalizada con el modelo y reglas vinculadas"""
     if isinstance(payload, list):
-        return [
-            {
-                "model": MODEL,
-                "context": item,
-                "linkedRules": LINKEDRULES
-            }
-            for item in payload
-        ]
+        return [_build_entry(item, include_linked_rules=True) for item in payload]
     elif isinstance(payload, dict):
-        return [
-            {
-                "model": MODEL,
-                "context": payload,
-                "linkedRules": LINKEDRULES
-            }
-        ]
+        return [_build_entry(payload, include_linked_rules=True)]
     else:
         raise ValueError("El payload debe ser una lista o un diccionario.")
 
 def build_simple_response(payload: Any) -> List[Dict[str, Any]]:
     """Construye la respuesta simple solo con modelo y contexto (sin linkedRules)"""
     if isinstance(payload, list):
-        return [
-            {
-                "model": MODEL,
-                "context": item
-            }
-            for item in payload
-        ]
+        return [_build_entry(item, include_linked_rules=False) for item in payload]
     elif isinstance(payload, dict):
-        return [
-            {
-                "model": MODEL,
-                "context": payload
-            }
-        ]
+        return [_build_entry(payload, include_linked_rules=False)]
     else:
         raise ValueError("El payload debe ser una lista o un diccionario.")

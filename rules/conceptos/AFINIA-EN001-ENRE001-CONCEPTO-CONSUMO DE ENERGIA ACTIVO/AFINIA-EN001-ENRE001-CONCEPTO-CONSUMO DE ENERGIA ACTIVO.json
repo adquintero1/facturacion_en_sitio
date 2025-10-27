@@ -2,37 +2,37 @@
   "contentType": "application/vnd.gorules.decision",
   "nodes": [
     {
-      "id": "50a49b49-5541-44f8-b1f7-8b910ad56b50",
-      "name": "request",
       "type": "inputNode",
       "content": {
         "schema": ""
       },
+      "id": "50a49b49-5541-44f8-b1f7-8b910ad56b50",
+      "name": "request",
       "position": {
         "x": 155,
         "y": 355
       }
     },
     {
-      "id": "2e8bd61c-3290-44ca-9d11-a879a4c5a2b5",
-      "name": "response",
       "type": "outputNode",
       "content": {
         "schema": ""
       },
+      "id": "2e8bd61c-3290-44ca-9d11-a879a4c5a2b5",
+      "name": "response",
       "position": {
         "x": 745,
         "y": 355
       }
     },
     {
-      "id": "44d24fc2-6894-4e59-b016-3ff835169a6e",
-      "name": "Calculate amount",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n  // ==============================\r\n  // 1) EXTRACCIÓN Y VALIDACIONES\r\n  // ==============================\r\n  const active_energy_consumption = Number(\r\n    input?.tsl_wo_work_order_attribute?.active_energy_consumption ?? 0\r\n  );\r\n\r\n  const billingItemCode =\r\n    input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode.trim() === '' || billingItemCode === 'null') {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description:\r\n          'parameter_billingItem_code for rule Consumo de energia activa not found',\r\n        status: 'ERROR',\r\n      },\r\n    };\r\n  }\r\n\r\n  const billingItems =\r\n    input?.tsl_wo_work_order_attribute?.billing_items?.active_energy_billing_items ?? [];\r\n\r\n  if (!Array.isArray(billingItems) || billingItems.length === 0) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description:\r\n          'active_energy_billing_items not found in billing_items structure',\r\n        status: 'ERROR',\r\n      },\r\n    };\r\n  }\r\n\r\n  // Buscar el billing item por código (NO el primero)\r\n  const targetItem = billingItems.find(\r\n    (bi) => String(bi?.billing_item_code ?? '').trim() === String(billingItemCode).trim()\r\n  );\r\n\r\n  if (!targetItem) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: `The parameter_billingItem_code '${billingItemCode}' could not be found in the billing concepts structure`,\r\n        status: 'ERROR',\r\n      },\r\n    };\r\n  }\r\n\r\n  // ==============================\r\n  // 2) OBTENER ESTRUCTURA DE PRECIOS\r\n  // ==============================\r\n  const rawPrices =\r\n    targetItem?.prices_and_method?.price_structure?.graduated_pricing?.prices ?? [];\r\n\r\n  if (!Array.isArray(rawPrices) || rawPrices.length === 0) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        rule_description: `Rate prices for '${billingItemCode}' not found`,\r\n        status: 'ERROR',\r\n      },\r\n    };\r\n  }\r\n\r\n  // Normalizar y ordenar por interval_low ASC (como solicitaste)\r\n  const precios = rawPrices\r\n    .map((p) => ({\r\n      low: Number(p?.interval_low ?? 0),\r\n      high:\r\n        Number(p?.interval_high ?? 0) === 999999999 || p?.interval_high == null\r\n          ? 999999999\r\n          : Number(p.interval_high),\r\n      price: Number(p?.base_price ?? 0),\r\n    }))\r\n    .sort((a, b) => a.low - b.low);\r\n\r\n    console.log('precios',precios)\r\n\r\n  // ==============================\r\n  // 3) CÁLCULO ACUMULATIVO POR RANGOS\r\n  // ==============================\r\n  let consumo_restante = active_energy_consumption;\r\n  let costo_total = 0;\r\n\r\n  // Para trazabilidad\r\n  const detalle_bloques = [];\r\n\r\n  // Llevamos un \"límite previo\" para evitar solapes. Arranca en 0 kWh.\r\n  let limite_anterior = 0;\r\n\r\n  for (const r of precios) {\r\n    if (consumo_restante <= 0) break;\r\n\r\n    // Asegurar consistencia si hay huecos/solapes\r\n    const low = Math.max(r.low, limite_anterior);\r\n    const high = r.high;\r\n\r\n    if (high !== 999999999 && high <= low) {\r\n      // Rango inválido o vaciado por solape: saltar\r\n      continue;\r\n    }\r\n\r\n    let consumo_rango;\r\n    if (high === 999999999) {\r\n      // Último rango \"abierto\"\r\n      consumo_rango = consumo_restante;\r\n    } else {\r\n      // Ancho del bloque (sin +1 para mantener compatibilidad con tu lógica previa)\r\n      const ancho = Math.max(0, high - low);\r\n      if (ancho === 0) continue;\r\n      consumo_rango = Math.min(consumo_restante, ancho);\r\n    }\r\n\r\n    const importe_bloque = consumo_rango * r.price;\r\n    costo_total += importe_bloque;\r\n\r\n    detalle_bloques.push({\r\n      rango_inferior: r.low,\r\n      rango_superior: r.high === 999999999 ? 'Sin límite' : r.high,\r\n      precio_unitario: r.price,\r\n      consumo_en_rango: consumo_rango,\r\n      importe_bloque,\r\n    });\r\n\r\n    consumo_restante -= consumo_rango;\r\n    limite_anterior = high === 999999999 ? limite_anterior + consumo_rango : high;\r\n  }\r\n\r\n  if (consumo_restante !== 0) {\r\n    return {\r\n      ...input,\r\n      result: {\r\n        status: 'ERROR',\r\n        status_description: 'Consumption ranges still need to be calculated',\r\n      },\r\n    };\r\n  }\r\n\r\n  // ==============================\r\n  // 4) ACTUALIZAR EL BILLING ITEM\r\n  // ==============================\r\n  targetItem.billing_item_amount = costo_total;\r\n\r\n  // ==============================\r\n  // 5) SALIDA\r\n  // ==============================\r\n  return {\r\n    tsl_wo_work_order_attribute: { ...input.tsl_wo_work_order_attribute },\r\n    result: {\r\n      total_amount: costo_total,\r\n      status: 'OK',\r\n      status_description:\r\n        'Consumo de energia activa calculation rule completed (prices picked by billingItemCode and sorted by interval_low asc)',\r\n    },\r\n  };\r\n};\r\n",
         "omitNodes": false
       },
+      "id": "44d24fc2-6894-4e59-b016-3ff835169a6e",
+      "name": "Calculate amount",
       "position": {
         "x": 435,
         "y": 355
@@ -42,15 +42,15 @@
   "edges": [
     {
       "id": "d2e686c0-13af-4e0e-ba94-c3886d85a52e",
-      "type": "edge",
       "sourceId": "50a49b49-5541-44f8-b1f7-8b910ad56b50",
-      "targetId": "44d24fc2-6894-4e59-b016-3ff835169a6e"
+      "targetId": "44d24fc2-6894-4e59-b016-3ff835169a6e",
+      "type": "edge"
     },
     {
       "id": "03dabced-11f6-4761-ad5a-c02397f14f26",
-      "type": "edge",
       "sourceId": "44d24fc2-6894-4e59-b016-3ff835169a6e",
-      "targetId": "2e8bd61c-3290-44ca-9d11-a879a4c5a2b5"
+      "targetId": "2e8bd61c-3290-44ca-9d11-a879a4c5a2b5",
+      "type": "edge"
     }
   ]
 }

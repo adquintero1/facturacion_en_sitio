@@ -1,0 +1,952 @@
+{
+  "contentType": "application/vnd.gorules.decision",
+  "nodes": [
+    {
+      "type": "inputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "2b515e01-3cc5-46bf-b547-03c1039826ec",
+      "name": "request",
+      "position": {
+        "x": -2285,
+        "y": 470
+      }
+    },
+    {
+      "type": "outputNode",
+      "content": {
+        "schema": ""
+      },
+      "id": "97498d1e-92a8-4503-b86e-ce970156d1d4",
+      "name": "response",
+      "position": {
+        "x": 5835,
+        "y": 1025
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"subsidio\",\n    billing_item_description: \"Subsido\",\n    print_description: \"Subsidio\",\n    print_order: 59,\n    calculation_order: 59,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-SUBSIDIO'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "name": "Subsidio",
+      "position": {
+        "x": 2480,
+        "y": 815
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",           \n    billing_item_code: \"consumo\",\n    billing_item_description: \"Consumo de energia activa\",\n    print_description: \"Consumo de energia activa\",\n    print_order: 1,\n    calculation_order: 1,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "f01ce45c-343b-4ff6-99f2-af36ebecc857",
+      "name": "Consumo",
+      "position": {
+        "x": 300,
+        "y": 575
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion\",\n    billing_item_description: \"Contribucion por energia activa\",\n    print_description: \"Contribucion por energia activa\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONTRIBUCION ENERGIA ACTIVA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "ff425641-7812-444d-9356-b17dabadb331",
+      "name": "Contribucion",
+      "position": {
+        "x": 2860,
+        "y": 640
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "30c7d051-c212-4131-b342-763122924f3a",
+            "condition": "telemedido",
+            "isDefault": false
+          },
+          {
+            "id": "313f68e2-d050-486f-8552-8500934d51e7",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "0db4f2fc-38e1-4656-ab87-06400c063638",
+      "name": "Telemedido?",
+      "position": {
+        "x": -590,
+        "y": 470
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "ed4f9672-db97-461c-bac3-179b4e61194c",
+            "condition": "telemedido",
+            "isDefault": false
+          },
+          {
+            "id": "3e943c00-cbaf-48cf-b6b6-41d89259e3c9",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "name": "Telemedido?",
+      "position": {
+        "x": 2140,
+        "y": 530
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "7fc70d9f-5602-4333-bd12-c44d5e2c53c0",
+            "_description": "",
+            "7fcc6186-fc90-49ac-90a4-b291f687d8fa": "true",
+            "9141761e-ef28-4270-813d-3aaadc8a49ec": "\"telemedido\"",
+            "e13afce9-e613-455e-9fde-3b691450f8c6": "\"inteligente\""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "9141761e-ef28-4270-813d-3aaadc8a49ec",
+            "name": "Tipo de medicion",
+            "field": "tsl_wo_work_order_attribute.measurement_type"
+          },
+          {
+            "id": "e13afce9-e613-455e-9fde-3b691450f8c6",
+            "name": "Tipo de aparato",
+            "field": "tsl_wo_work_order_attribute.device_type"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "7fcc6186-fc90-49ac-90a4-b291f687d8fa",
+            "name": "Output",
+            "field": "telemedido"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "eea9b4a8-3d20-4355-83ec-61d44aeb6ca8",
+      "name": "Valida Telemedicion?",
+      "position": {
+        "x": -1390,
+        "y": 470
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",          \n    billing_item_code: \"reactiva\",\n    billing_item_description: \"Consumo de energia reactiva\",\n    print_description: \"Consumo de energia reactiva\",\n    print_order: 42,\n    calculation_order: 42,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA REACTIVA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "b6f3404c-97eb-417b-80a1-8f2b7fb04d4a",
+      "name": "Reactiva",
+      "position": {
+        "x": 875,
+        "y": 460
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "88608f10-f55e-4292-8108-bf7462c96613",
+            "condition": "autogenerador == \"false\"",
+            "isDefault": false
+          },
+          {
+            "id": "fa1814f9-52e6-48a5-9a0c-982e760df6ad",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "057bd684-a60d-41de-bd78-b2baa7c0d47f",
+      "name": "Autogenerador?",
+      "position": {
+        "x": 585,
+        "y": 420
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",           \n    billing_item_code: \"consumo_punta\",\n    billing_item_description: \"Consumo de energia activa punta\",\n    print_description: \"Consumo de energia activa punta\",\n    print_order: 2,\n    calculation_order: 2,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA PUNTA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "9c087e2b-2d13-427c-8715-a38447019648",
+      "name": "Consumo punta",
+      "position": {
+        "x": -265,
+        "y": 420
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",          \n    billing_item_code: \"consumo_valle\",\n    billing_item_description: \"Consumo de energia activa valle\",\n    print_description: \"Consumo de energia activa valle\",\n    print_order: 3,\n    calculation_order: 3,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA VALLE'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "1dc22e10-1025-422a-9984-5855e8d7b567",
+      "name": "Consumo valle",
+      "position": {
+        "x": 15,
+        "y": 420
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "c630201f-5217-4d44-8386-e28a85254227",
+            "condition": "contribuye",
+            "isDefault": false
+          },
+          {
+            "id": "0664e559-1d4a-4b01-af85-19089c257752",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "7f96defe-632c-4a2a-9e11-5d1512808137",
+      "name": "Contribuye?",
+      "position": {
+        "x": 1820,
+        "y": 675
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",          \n    billing_item_code: \"consumo_llano\",\n    billing_item_description: \"Consumo de energia activa llano\",\n    print_description: \"Consumo de energia activa llano\",\n    print_order: 3,\n    calculation_order: 3,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA LLANO'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "837026df-6cc5-426f-9fe0-36a84b3e34ca",
+      "name": "Consumo llano",
+      "position": {
+        "x": 295,
+        "y": 420
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "c9a9af5e-975d-4e21-bc8f-b50d6e2a23e0",
+            "condition": "autogenerador == \"false\"",
+            "isDefault": false
+          },
+          {
+            "id": "34fe5e25-771d-4e30-ae14-d6bdfc81ccbc",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "cbaf82f0-e531-4286-89ae-3c9295221d36",
+      "name": "Autogenerador",
+      "position": {
+        "x": 3350,
+        "y": 480
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_punta\",\n    billing_item_description: \"Contribucion por energia activa punta\",\n    print_description: \"Contribucion por energia activa punta\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONTRIBUCION ENERGIA ACTIVA PUNTA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "bc2a3292-94f8-4148-9c7b-08b9ae8d7240",
+      "name": "Contribucion punta",
+      "position": {
+        "x": 2470,
+        "y": 480
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_valle\",\n    billing_item_description: \"Contribucion por energia activa valle\",\n    print_description: \"Contribucion por energia activa valle\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONTRIBUCION ENERGIA ACTIVA VALLE'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "531b073d-b54f-434f-bfb6-0001d95dcb46",
+      "name": "Contribucion valle",
+      "position": {
+        "x": 2745,
+        "y": 480
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_llano\",\n    billing_item_description: \"Contribucion por energia activa llano\",\n    print_description: \"Contribucion por energia activa llano\",\n    print_order: 63,\n    calculation_order: 63,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONTRIBUCION ENERGIA ACTIVA LLANO'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "d276f20c-3633-4de8-a3b1-86d20e96e0c3",
+      "name": "Contribucion llano",
+      "position": {
+        "x": 3025,
+        "y": 480
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_reactiva\",\n    billing_item_description: \"Contribucion por energia reactiva\",\n    print_description: \"Contribucion por energia reactiva\",\n    print_order: 64,\n    calculation_order: 64,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONTRIBUCION ENERGIA REACTIVA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "48306fa4-734c-40de-a7ec-57db7faf75a8",
+      "name": "Contribucion reactiva",
+      "position": {
+        "x": 3640,
+        "y": 515
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "f34e2d1b-8b65-4ebb-b716-4c23c462eae1",
+            "condition": "subsidio",
+            "isDefault": false
+          },
+          {
+            "id": "25db5fda-671e-40cc-88f8-12b1cb690347",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "b73ebd42-d67f-451e-ad2d-ad3ab1a9f62e",
+      "name": "Subsidio?",
+      "position": {
+        "x": 2145,
+        "y": 780
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "9fbc1d00-c1c8-413f-8836-abdfc09cc25d",
+            "condition": "demanda",
+            "isDefault": false
+          },
+          {
+            "id": "54ea7ad8-c438-45da-9d53-7c7587008b9b",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "eab66c8f-ff50-4d78-aaf7-121c8215daf9",
+      "name": "Demanda?",
+      "position": {
+        "x": 1205,
+        "y": 570
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id: null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",          \n    billing_item_code: \"demanda\",\n    billing_item_description: \"Demanda\",\n    print_description: \"Demanda\",\n    print_order: 50,\n    calculation_order: 50,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-DEMANDA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "e9b40c96-730e-4ebc-9f96-7c01e194c563",
+      "name": "Demanda",
+      "position": {
+        "x": 1515,
+        "y": 605
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "9fbc1d00-c1c8-413f-8836-abdfc09cc25d",
+            "condition": "demanda",
+            "isDefault": false
+          },
+          {
+            "id": "54ea7ad8-c438-45da-9d53-7c7587008b9b",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "649c414d-73b0-47b4-8023-e31cb9ccd2b5",
+      "name": "Demanda?",
+      "position": {
+        "x": 3945,
+        "y": 635
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.active_energy_billing_items == null) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"contribucion_demanda\",\n    billing_item_description: \"Contribucion por demanda\",\n    print_description: \"Contribucion por demanda\",\n    print_order: 64,\n    calculation_order: 64,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONTRIBUCION POR DEMANDA'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.active_energy_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "7dc823a5-26f7-4305-9389-83b493813b44",
+      "name": "Contribucion demanda",
+      "position": {
+        "x": 4270,
+        "y": 670
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "0ae1cc6d-bea5-46b3-b0c0-0036b7777acd",
+            "_description": "",
+            "95178811-f60b-4fd6-9a19-a2067db631e6": "true",
+            "c0af7d92-575b-411d-bc55-09ee9c944c15": "'0119','0129','0149'"
+          },
+          {
+            "_id": "e765e81a-ff81-4a99-b1ef-29c5e8703a10",
+            "_description": "",
+            "95178811-f60b-4fd6-9a19-a2067db631e6": "false",
+            "c0af7d92-575b-411d-bc55-09ee9c944c15": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "c0af7d92-575b-411d-bc55-09ee9c944c15",
+            "name": "clase de actividad economica",
+            "field": "tsl_wo_work_order_attribute.activity_code"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "95178811-f60b-4fd6-9a19-a2067db631e6",
+            "name": "Output",
+            "field": "subsidio"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "0c19ad36-a10f-4b87-be50-5e7bbd6e32cb",
+      "name": "Valida subsidio?",
+      "position": {
+        "x": -1685,
+        "y": 470
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "986d5232-7eca-4fd7-a41d-d1c1280bd753",
+            "_description": "",
+            "d53f6e35-ae89-4f9d-95da-f4d0e76a50a8": "'111','112','113','114','115','119','121','122','123','124','125','126','127','128','129','130','141','142','143','144','145','149','150','161','162','163','164','170','210','220','230','240','311','312','321','322','510','520','610','620','710','721','722','723','729','811','812','891','892','893','899','910','990','1010','1020','1030','1040','1050','1061','1062','1071','1072','1073','1074','1075','1079','1080','1101','1102','1103','1104','1200','1311','1312','1313','1391','1392','1393','1394','1399','1410','1420','1430','1511','1512','1513','1521','1522','1523','1610','1621','1622','1623','1629','1701','1702','1709','1811','1812','1820','1910','1920','1921','2011','2012','2013','2014','2021','2022','2023','2029','2030','2100','2211','2212','2219','2221','2229','2310','2391','2392','2393','2394','2395','2396','2399','2410','2420','2431','2432','2433'",
+            "feb0a56a-31b2-4e31-86cc-99c3954a89cf": "false"
+          },
+          {
+            "_id": "d0a4d78e-5703-4e2f-82fc-c66dc6067966",
+            "_description": "",
+            "d53f6e35-ae89-4f9d-95da-f4d0e76a50a8": "",
+            "feb0a56a-31b2-4e31-86cc-99c3954a89cf": "true"
+          }
+        ],
+        "inputs": [
+          {
+            "id": "d53f6e35-ae89-4f9d-95da-f4d0e76a50a8",
+            "name": "grupo de actividad economica",
+            "field": "tsl_wo_work_order_attribute.group_activity_code"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "feb0a56a-31b2-4e31-86cc-99c3954a89cf",
+            "name": "Output",
+            "field": "contribuye"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "3e8bb576-c277-46a8-a9f3-3000774533ce",
+      "name": "Valida contribucion?",
+      "position": {
+        "x": -1985,
+        "y": 470
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "4e1280a2-4cfb-491c-9656-f6392d248ce6",
+            "_description": "",
+            "3f2066ec-4e5a-40c8-bda0-71eadfc7c559": "true",
+            "546042d8-72d9-4523-89bb-c1acb6e646d6": "\"true\""
+          },
+          {
+            "_id": "c3a76571-6606-4938-9c5c-6b9141ceaf8e",
+            "_description": "",
+            "3f2066ec-4e5a-40c8-bda0-71eadfc7c559": "false",
+            "546042d8-72d9-4523-89bb-c1acb6e646d6": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "546042d8-72d9-4523-89bb-c1acb6e646d6",
+            "name": "Tiene alumbrado publico ?",
+            "field": "tsl_wo_work_order_attribute.has_public_lighting"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "3f2066ec-4e5a-40c8-bda0-71eadfc7c559",
+            "name": "Output",
+            "field": "alumbrado_publico"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "77890b75-ead3-4d09-a5e6-252a7d990c29",
+      "name": "valida Alumbrado Publico",
+      "position": {
+        "x": -1115,
+        "y": 470
+      }
+    },
+    {
+      "type": "decisionTableNode",
+      "content": {
+        "hitPolicy": "first",
+        "rules": [
+          {
+            "_id": "d2977ec5-5069-463d-a744-87cab977d0f8",
+            "_description": "",
+            "54a0c769-d4e9-4145-b909-0c3d1f244c93": "true",
+            "cb7216b0-c94b-4c84-91ab-9e7a19f8e488": "\"true\""
+          },
+          {
+            "_id": "6ca06e8c-8c23-44c5-93dd-a363dae06f00",
+            "_description": "",
+            "54a0c769-d4e9-4145-b909-0c3d1f244c93": "false",
+            "cb7216b0-c94b-4c84-91ab-9e7a19f8e488": ""
+          }
+        ],
+        "inputs": [
+          {
+            "id": "cb7216b0-c94b-4c84-91ab-9e7a19f8e488",
+            "name": "tiene aseo ?",
+            "field": "tsl_wo_work_order_attribute.has_cleaning"
+          }
+        ],
+        "outputs": [
+          {
+            "id": "54a0c769-d4e9-4145-b909-0c3d1f244c93",
+            "name": "Output",
+            "field": "aseo"
+          }
+        ],
+        "passThrough": true,
+        "inputField": null,
+        "outputPath": null,
+        "executionMode": "single"
+      },
+      "id": "6f9880bd-11d8-41ec-a154-b439d501ea9f",
+      "name": "Valida Aseo",
+      "position": {
+        "x": -850,
+        "y": 470
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "e547aaee-5112-4433-9cc1-30ca8bc67b36",
+            "condition": "alumbrado_publico",
+            "isDefault": false
+          },
+          {
+            "id": "a3a02400-b761-41a3-8beb-f3312105a228",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "1840b691-dd6d-4159-b893-32434dce9398",
+      "name": "Alumbrado ?",
+      "position": {
+        "x": 4595,
+        "y": 815
+      }
+    },
+    {
+      "type": "switchNode",
+      "content": {
+        "hitPolicy": "first",
+        "statements": [
+          {
+            "id": "39bdf505-8afa-4c9c-a974-d134e3f75280",
+            "condition": "aseo",
+            "isDefault": false
+          },
+          {
+            "id": "faaef133-2576-4197-992e-f44d88dea50e",
+            "condition": "",
+            "isDefault": true
+          }
+        ]
+      },
+      "id": "21a409ed-ba50-47e4-82f1-14edd55ca90e",
+      "name": "Aseo ?",
+      "position": {
+        "x": 5220,
+        "y": 920
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: [],\n      cleaning_billing_items: null,\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.public_lighting_billing_items == null) {\n    workOrder.billing_items.public_lighting_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"alumbrado_publico\",\n    billing_item_description: \"Tasa de alumbrado publico\",\n    print_description: \"Tasa de alumbrado publico\",\n    print_order: 1,\n    calculation_order: 1,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-ALUMBRADO PUBLICO'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.public_lighting_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "d0136c3d-58b9-4a89-aa91-0eb364e4e98f",
+      "name": "Alumbrado publico",
+      "position": {
+        "x": 4890,
+        "y": 850
+      }
+    },
+    {
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n  // Asegura el contenedor\n  if (!input.tsl_wo_work_order_attribute) {\n    input.tsl_wo_work_order_attribute = {};\n  }\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  // Asegura el objeto billing_items con la forma correcta\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: null,\n      public_lighting_billing_items: null,\n      cleaning_billing_items: [],\n    };\n  }\n\n  // Si existe pero la lista está en null, inicialízala como []\n  if (workOrder.billing_items.cleaning_billing_items == null) {\n    workOrder.billing_items.cleaning_billing_items = [];\n  }\n\n  // Item a agregar\n  const newItem = {\n    legacy_billing_item_id:null,\n    billing_item_amount: 0.0,\n    is_calculate: \"true\",\n    billing_item_code: \"aseo\",\n    billing_item_description: \"Aseo\",\n    print_description: \"Aseo\",\n    print_order: 1,\n    calculation_order: 1,\n    print_grouping: null,\n    method : 'AFINIA-EN001-ENRE001-METODOS DE CALCULO-ASEO'\n  };\n\n  // Agrega al arreglo correcto\n  workOrder.billing_items.cleaning_billing_items.push(newItem);\n\n  return input;\n};",
+        "omitNodes": false
+      },
+      "id": "52d91868-c3f1-4362-819d-0e2c944d8c3f",
+      "name": "Aseo",
+      "position": {
+        "x": 5505,
+        "y": 955
+      }
+    }
+  ],
+  "edges": [
+    {
+      "id": "dc30f8c8-10d4-4ed0-a83b-121734ef77cd",
+      "sourceId": "9c087e2b-2d13-427c-8715-a38447019648",
+      "targetId": "1dc22e10-1025-422a-9984-5855e8d7b567",
+      "type": "edge"
+    },
+    {
+      "id": "15627af9-9f02-4a8c-9e77-836d1251e6af",
+      "sourceId": "0db4f2fc-38e1-4656-ab87-06400c063638",
+      "targetId": "f01ce45c-343b-4ff6-99f2-af36ebecc857",
+      "sourceHandle": "313f68e2-d050-486f-8552-8500934d51e7",
+      "type": "edge"
+    },
+    {
+      "id": "6d4b5254-12a5-42b4-8200-eaeffe927d15",
+      "sourceId": "1dc22e10-1025-422a-9984-5855e8d7b567",
+      "targetId": "837026df-6cc5-426f-9fe0-36a84b3e34ca",
+      "type": "edge"
+    },
+    {
+      "id": "b264ab6f-44c7-42e8-aa65-e7c2bbc923df",
+      "sourceId": "7f96defe-632c-4a2a-9e11-5d1512808137",
+      "targetId": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "sourceHandle": "c630201f-5217-4d44-8386-e28a85254227",
+      "type": "edge"
+    },
+    {
+      "id": "b6b9f10a-437d-4665-bfd4-f4ef069f445f",
+      "sourceId": "bc2a3292-94f8-4148-9c7b-08b9ae8d7240",
+      "targetId": "531b073d-b54f-434f-bfb6-0001d95dcb46",
+      "type": "edge"
+    },
+    {
+      "id": "1630fc96-f19b-4801-ab4b-34c35917ff65",
+      "sourceId": "531b073d-b54f-434f-bfb6-0001d95dcb46",
+      "targetId": "d276f20c-3633-4de8-a3b1-86d20e96e0c3",
+      "type": "edge"
+    },
+    {
+      "id": "b08d06b7-5bad-464e-aab9-505439538589",
+      "sourceId": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "targetId": "ff425641-7812-444d-9356-b17dabadb331",
+      "sourceHandle": "3e943c00-cbaf-48cf-b6b6-41d89259e3c9",
+      "type": "edge"
+    },
+    {
+      "id": "3cc4bee1-7cc4-4b7a-8462-2e473799c7cd",
+      "sourceId": "b73ebd42-d67f-451e-ad2d-ad3ab1a9f62e",
+      "targetId": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "sourceHandle": "f34e2d1b-8b65-4ebb-b716-4c23c462eae1",
+      "type": "edge"
+    },
+    {
+      "id": "675c49ef-8bd2-43c6-9839-5b290b085a38",
+      "sourceId": "7f96defe-632c-4a2a-9e11-5d1512808137",
+      "targetId": "b73ebd42-d67f-451e-ad2d-ad3ab1a9f62e",
+      "sourceHandle": "0664e559-1d4a-4b01-af85-19089c257752",
+      "type": "edge"
+    },
+    {
+      "id": "a0026c18-83d2-447f-af94-aca62b5446ab",
+      "sourceId": "b6f3404c-97eb-417b-80a1-8f2b7fb04d4a",
+      "targetId": "eab66c8f-ff50-4d78-aaf7-121c8215daf9",
+      "type": "edge"
+    },
+    {
+      "id": "d06fcbfa-90a9-4f7b-b767-f8db5892ced3",
+      "sourceId": "f01ce45c-343b-4ff6-99f2-af36ebecc857",
+      "targetId": "eab66c8f-ff50-4d78-aaf7-121c8215daf9",
+      "type": "edge"
+    },
+    {
+      "id": "422415af-53fc-49b7-9abf-1ada65e7e910",
+      "sourceId": "eab66c8f-ff50-4d78-aaf7-121c8215daf9",
+      "targetId": "e9b40c96-730e-4ebc-9f96-7c01e194c563",
+      "sourceHandle": "9fbc1d00-c1c8-413f-8836-abdfc09cc25d",
+      "type": "edge"
+    },
+    {
+      "id": "856f1512-06db-4e12-8043-f2dc595535e0",
+      "sourceId": "e9b40c96-730e-4ebc-9f96-7c01e194c563",
+      "targetId": "7f96defe-632c-4a2a-9e11-5d1512808137",
+      "type": "edge"
+    },
+    {
+      "id": "1ccacbd9-daea-4805-9ff9-306a002cab07",
+      "sourceId": "eab66c8f-ff50-4d78-aaf7-121c8215daf9",
+      "targetId": "7f96defe-632c-4a2a-9e11-5d1512808137",
+      "sourceHandle": "54ea7ad8-c438-45da-9d53-7c7587008b9b",
+      "type": "edge"
+    },
+    {
+      "id": "33c37ca1-5bbb-4d96-a630-98bdcd3d8952",
+      "sourceId": "48306fa4-734c-40de-a7ec-57db7faf75a8",
+      "targetId": "649c414d-73b0-47b4-8023-e31cb9ccd2b5",
+      "type": "edge"
+    },
+    {
+      "id": "dfe578b9-66f3-4e61-ba6f-0a07f6bca267",
+      "sourceId": "ff425641-7812-444d-9356-b17dabadb331",
+      "targetId": "649c414d-73b0-47b4-8023-e31cb9ccd2b5",
+      "type": "edge"
+    },
+    {
+      "id": "e18b69c6-22b5-4867-b37e-c25d747d8d0a",
+      "sourceId": "649c414d-73b0-47b4-8023-e31cb9ccd2b5",
+      "targetId": "7dc823a5-26f7-4305-9389-83b493813b44",
+      "sourceHandle": "9fbc1d00-c1c8-413f-8836-abdfc09cc25d",
+      "type": "edge"
+    },
+    {
+      "id": "b40045a2-9ce7-4bcc-835a-2628ca981769",
+      "sourceId": "0db4f2fc-38e1-4656-ab87-06400c063638",
+      "targetId": "9c087e2b-2d13-427c-8715-a38447019648",
+      "sourceHandle": "30c7d051-c212-4131-b342-763122924f3a",
+      "type": "edge"
+    },
+    {
+      "id": "60421c2c-4907-4cd9-af1f-257836c84315",
+      "sourceId": "837026df-6cc5-426f-9fe0-36a84b3e34ca",
+      "targetId": "057bd684-a60d-41de-bd78-b2baa7c0d47f",
+      "type": "edge"
+    },
+    {
+      "id": "36a894da-d610-4b70-af41-de10b01b3193",
+      "sourceId": "057bd684-a60d-41de-bd78-b2baa7c0d47f",
+      "targetId": "b6f3404c-97eb-417b-80a1-8f2b7fb04d4a",
+      "sourceHandle": "88608f10-f55e-4292-8108-bf7462c96613",
+      "type": "edge"
+    },
+    {
+      "id": "df4a62b2-3f33-4f50-9169-9d3666552e3f",
+      "sourceId": "057bd684-a60d-41de-bd78-b2baa7c0d47f",
+      "targetId": "eab66c8f-ff50-4d78-aaf7-121c8215daf9",
+      "sourceHandle": "fa1814f9-52e6-48a5-9a0c-982e760df6ad",
+      "type": "edge"
+    },
+    {
+      "id": "c8db8fb3-489e-4e64-987d-befca41e07b4",
+      "sourceId": "415730b0-743d-4371-b37f-713ad24b06ff",
+      "targetId": "bc2a3292-94f8-4148-9c7b-08b9ae8d7240",
+      "sourceHandle": "ed4f9672-db97-461c-bac3-179b4e61194c",
+      "type": "edge"
+    },
+    {
+      "id": "0a937a41-edb9-4e9d-9c92-431ea56ccdef",
+      "sourceId": "d276f20c-3633-4de8-a3b1-86d20e96e0c3",
+      "targetId": "cbaf82f0-e531-4286-89ae-3c9295221d36",
+      "type": "edge"
+    },
+    {
+      "id": "6e40d87a-046e-4cdb-8118-91b2bfe796dd",
+      "sourceId": "cbaf82f0-e531-4286-89ae-3c9295221d36",
+      "targetId": "48306fa4-734c-40de-a7ec-57db7faf75a8",
+      "sourceHandle": "c9a9af5e-975d-4e21-bc8f-b50d6e2a23e0",
+      "type": "edge"
+    },
+    {
+      "id": "76ab84dd-f7a6-4a80-8be7-586dd817adef",
+      "sourceId": "cbaf82f0-e531-4286-89ae-3c9295221d36",
+      "targetId": "649c414d-73b0-47b4-8023-e31cb9ccd2b5",
+      "sourceHandle": "34fe5e25-771d-4e30-ae14-d6bdfc81ccbc",
+      "type": "edge"
+    },
+    {
+      "id": "86de19b1-351d-4ed7-8843-65b4e9ba2b2d",
+      "sourceId": "0c19ad36-a10f-4b87-be50-5e7bbd6e32cb",
+      "targetId": "eea9b4a8-3d20-4355-83ec-61d44aeb6ca8",
+      "type": "edge"
+    },
+    {
+      "id": "0efcd46b-b961-4888-bd21-b2dc04448140",
+      "sourceId": "2b515e01-3cc5-46bf-b547-03c1039826ec",
+      "targetId": "3e8bb576-c277-46a8-a9f3-3000774533ce",
+      "type": "edge"
+    },
+    {
+      "id": "2609f989-a095-4ac0-9e47-9bf86048ee4c",
+      "sourceId": "3e8bb576-c277-46a8-a9f3-3000774533ce",
+      "targetId": "0c19ad36-a10f-4b87-be50-5e7bbd6e32cb",
+      "type": "edge"
+    },
+    {
+      "id": "6e830f23-4a68-4caf-846e-0e109cbe9490",
+      "sourceId": "eea9b4a8-3d20-4355-83ec-61d44aeb6ca8",
+      "targetId": "77890b75-ead3-4d09-a5e6-252a7d990c29",
+      "type": "edge"
+    },
+    {
+      "id": "056f2511-bab5-4e20-9e2d-589b18791860",
+      "sourceId": "77890b75-ead3-4d09-a5e6-252a7d990c29",
+      "targetId": "6f9880bd-11d8-41ec-a154-b439d501ea9f",
+      "type": "edge"
+    },
+    {
+      "id": "1fc544e3-93d4-4cb0-b290-be3ef6d89571",
+      "sourceId": "6f9880bd-11d8-41ec-a154-b439d501ea9f",
+      "targetId": "0db4f2fc-38e1-4656-ab87-06400c063638",
+      "type": "edge"
+    },
+    {
+      "id": "f1ec1417-3131-44ca-8876-9b5580c43e34",
+      "sourceId": "52d91868-c3f1-4362-819d-0e2c944d8c3f",
+      "targetId": "97498d1e-92a8-4503-b86e-ce970156d1d4",
+      "type": "edge"
+    },
+    {
+      "id": "409c2028-15f6-4551-ba74-2e6eeb957898",
+      "sourceId": "21a409ed-ba50-47e4-82f1-14edd55ca90e",
+      "targetId": "52d91868-c3f1-4362-819d-0e2c944d8c3f",
+      "sourceHandle": "39bdf505-8afa-4c9c-a974-d134e3f75280",
+      "type": "edge"
+    },
+    {
+      "id": "9b330f80-d39b-42c4-ae2e-24f6d3fb2fad",
+      "sourceId": "1840b691-dd6d-4159-b893-32434dce9398",
+      "targetId": "d0136c3d-58b9-4a89-aa91-0eb364e4e98f",
+      "sourceHandle": "e547aaee-5112-4433-9cc1-30ca8bc67b36",
+      "type": "edge"
+    },
+    {
+      "id": "52039838-d5fd-4de8-9f3c-0e02ebee4439",
+      "sourceId": "d0136c3d-58b9-4a89-aa91-0eb364e4e98f",
+      "targetId": "21a409ed-ba50-47e4-82f1-14edd55ca90e",
+      "type": "edge"
+    },
+    {
+      "id": "3fa8591c-004b-4fac-b355-f6ce817d8550",
+      "sourceId": "7dc823a5-26f7-4305-9389-83b493813b44",
+      "targetId": "1840b691-dd6d-4159-b893-32434dce9398",
+      "type": "edge"
+    },
+    {
+      "id": "8dc94a25-74d6-4233-b1ba-547f2cfe6046",
+      "sourceId": "649c414d-73b0-47b4-8023-e31cb9ccd2b5",
+      "targetId": "1840b691-dd6d-4159-b893-32434dce9398",
+      "sourceHandle": "54ea7ad8-c438-45da-9d53-7c7587008b9b",
+      "type": "edge"
+    },
+    {
+      "id": "edb6918e-c5e6-42f8-882b-7b445832db32",
+      "sourceId": "6a593616-eee2-40b6-ba18-7ced7018cf6d",
+      "targetId": "1840b691-dd6d-4159-b893-32434dce9398",
+      "type": "edge"
+    },
+    {
+      "id": "32374103-e63c-4e4c-8d42-2a3a55911861",
+      "sourceId": "b73ebd42-d67f-451e-ad2d-ad3ab1a9f62e",
+      "targetId": "1840b691-dd6d-4159-b893-32434dce9398",
+      "sourceHandle": "25db5fda-671e-40cc-88f8-12b1cb690347",
+      "type": "edge"
+    },
+    {
+      "id": "edce9493-cd82-476b-8afe-b57509aa5c63",
+      "sourceId": "1840b691-dd6d-4159-b893-32434dce9398",
+      "targetId": "21a409ed-ba50-47e4-82f1-14edd55ca90e",
+      "sourceHandle": "a3a02400-b761-41a3-8beb-f3312105a228",
+      "type": "edge"
+    },
+    {
+      "id": "ea2e0f2b-5ebd-4c45-89ec-dca08ed874f9",
+      "sourceId": "21a409ed-ba50-47e4-82f1-14edd55ca90e",
+      "targetId": "97498d1e-92a8-4503-b86e-ce970156d1d4",
+      "sourceHandle": "faaef133-2576-4197-992e-f44d88dea50e",
+      "type": "edge"
+    }
+  ]
+}

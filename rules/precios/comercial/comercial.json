@@ -1,0 +1,154 @@
+{
+   "comercial": {
+      "prices_and_method": [
+         {
+            "price_id": 13,
+            "calculation_method": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+            "price_structure": {
+               "graduated_pricing": {
+                  "prices": [
+                     {
+                        "base_price": "823.49",
+                        "base_units": "1",
+                        "code": "consumo",
+                        "interval_low": "174",
+                        "interval_high": "999999999",
+                        "id": "99",
+                        "description": "Precio de consumo de energia activa",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     },
+                     {
+                        "base_price": "823.49",
+                        "base_units": "1",
+                        "code": "conusmo",
+                        "interval_low": "0",
+                        "interval_high": "173",
+                        "id": "100",
+                        "description": "Precio de consumo de energia activa",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     }
+                  ]
+               }
+            }
+         },
+         {
+            "price_id": 14,
+            "calculation_method": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+            "price_structure": {
+               "graduated_pricing": {
+                  "prices": [
+                     {
+                        "base_price": "727.494",
+                        "base_units": "1",
+                        "code": "consumo",
+                        "interval_low": "174",
+                        "interval_high": "999999999",
+                        "id": "99",
+                        "description": "Precio de consumo de energia activa",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     },
+                     {
+                        "base_price": "727.494",
+                        "base_units": "1",
+                        "code": "conusmo",
+                        "interval_low": "0",
+                        "interval_high": "173",
+                        "id": "100",
+                        "description": "Precio de consumo de energia activa",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     }
+                  ]
+               }
+            }
+         },
+         {
+            "price_id": 15,
+            "calculation_method": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+            "price_structure": {
+               "graduated_pricing": {
+                  "prices": [
+                     {
+                        "base_price": "892.02",
+                        "base_units": "1",
+                        "code": "consumo",
+                        "interval_low": "0",
+                        "interval_high": "999999999",
+                        "id": "99",
+                        "description": "Precio de consumo de energia activa",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     }
+                  ]
+               }
+            }
+         },
+         {
+            "price_id": 16,
+            "calculation_method": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+            "price_structure": {
+               "graduated_pricing": {
+                  "prices": [
+                     {
+                        "base_price": "856.48",
+                        "base_units": "1",
+                        "code": "consumo",
+                        "interval_low": "0",
+                        "interval_high": "999999999",
+                        "id": "99",
+                        "description": "Precio de consumo de energia activa",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     }
+                  ]
+               }
+            }
+         },
+         {
+            "price_id": 23,
+            "calculation_method": "AFINIA-EN001-ENRE001-CONCEPTO-CONTRIBUCION",
+            "price_structure": {
+               "graduated_pricing": {
+                  "prices": [
+                     {
+                        "base_price": "178.4",
+                        "base_units": "1",
+                        "code": "contribucion",
+                        "interval_low": "0",
+                        "interval_high": "999999999",
+                        "id": "99",
+                        "description": "Precio de contribución",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     }
+                  ]
+               }
+            }
+         },
+         {
+            "price_id": 24,
+            "calculation_method": "AFINIA-EN001-ENRE001-CONCEPTO-CONTRIBUCION",
+            "price_structure": {
+               "graduated_pricing": {
+                  "prices": [
+                     {
+                        "base_price": "171.3",
+                        "base_units": "1",
+                        "code": "contribucion",
+                        "interval_low": "0",
+                        "interval_high": "999999999",
+                        "id": "99",
+                        "description": "Precio de contribucion",
+                        "validity_end_date": "2999-12-31",
+                        "validity_start_date": "2025-06-20"
+                     }
+                  ]
+               }
+            }
+         }
+      ]
+   }
+}
