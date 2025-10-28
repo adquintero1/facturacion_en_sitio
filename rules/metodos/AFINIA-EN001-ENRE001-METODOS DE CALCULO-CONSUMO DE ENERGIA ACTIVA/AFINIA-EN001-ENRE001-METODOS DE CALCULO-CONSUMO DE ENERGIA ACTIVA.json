@@ -2,46 +2,47 @@
   "contentType": "application/vnd.gorules.decision",
   "nodes": [
     {
+      "id": "009e04d3-20ca-4569-a19f-86f8d331420c",
+      "name": "request",
       "type": "inputNode",
       "content": {
         "schema": ""
       },
-      "id": "009e04d3-20ca-4569-a19f-86f8d331420c",
-      "name": "request",
       "position": {
         "x": -1100,
         "y": 260
       }
     },
     {
+      "id": "8022097d-69bd-41c1-b461-829043b16657",
+      "name": "response",
       "type": "outputNode",
       "content": {
         "schema": ""
       },
-      "id": "8022097d-69bd-41c1-b461-829043b16657",
-      "name": "response",
       "position": {
         "x": 2445,
         "y": 540
       }
     },
     {
+      "id": "0133f075-b4ef-42c8-86b8-abe8cd284177",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.residencial?.prices_and_method ?? [];\n  const targetId = 10; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "0133f075-b4ef-42c8-86b8-abe8cd284177",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 940,
         "y": -535
       }
     },
     {
+      "id": "fa01b2ac-9e39-4c77-a161-ecc465ccf075",
+      "name": "valida activo",
       "type": "decisionTableNode",
       "content": {
-        "hitPolicy": "first",
         "rules": [
           {
             "_id": "3404c617-e6fe-4af4-ba09-583e24cd337d",
@@ -82,19 +83,20 @@
             "field": "propiedad_del_activo"
           }
         ],
-        "passThrough": true,
+        "hitPolicy": "first",
         "inputField": null,
         "outputPath": null,
+        "passThrough": true,
         "executionMode": "single"
       },
-      "id": "fa01b2ac-9e39-4c77-a161-ecc465ccf075",
-      "name": "valida activo",
       "position": {
         "x": -815,
         "y": 260
       }
     },
     {
+      "id": "cc106125-72c3-45c8-9404-192b49fbb76b",
+      "name": "priedad del activo ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -121,16 +123,18 @@
           }
         ]
       },
-      "id": "cc106125-72c3-45c8-9404-192b49fbb76b",
-      "name": "priedad del activo ?",
       "position": {
         "x": 630,
         "y": -570
       }
     },
     {
+      "id": "4279bc5a-58c0-4dbf-8d4e-0fa2a52e3786",
+      "name": "Error",
       "type": "expressionNode",
       "content": {
+        "inputField": null,
+        "outputPath": null,
         "expressions": [
           {
             "id": "86a0fd73-7583-4c79-9f0f-a3e8b00c906a",
@@ -149,21 +153,18 @@
           }
         ],
         "passThrough": true,
-        "inputField": null,
-        "outputPath": null,
         "executionMode": "single"
       },
-      "id": "4279bc5a-58c0-4dbf-8d4e-0fa2a52e3786",
-      "name": "Error",
       "position": {
         "x": 940,
         "y": -270
       }
     },
     {
+      "id": "9cfd840f-ed8b-4233-a2e8-c6fc0c281d08",
+      "name": "Valida tarifa",
       "type": "decisionTableNode",
       "content": {
-        "hitPolicy": "first",
         "rules": [
           {
             "_id": "ca4c1e13-6926-4ac9-a895-cbf4a15cc7e2",
@@ -210,19 +211,20 @@
             "field": "tarifa"
           }
         ],
-        "passThrough": true,
+        "hitPolicy": "first",
         "inputField": null,
         "outputPath": null,
+        "passThrough": true,
         "executionMode": "single"
       },
-      "id": "9cfd840f-ed8b-4233-a2e8-c6fc0c281d08",
-      "name": "Valida tarifa",
       "position": {
         "x": -545,
         "y": 260
       }
     },
     {
+      "id": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
+      "name": "Tarifa ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -254,17 +256,16 @@
           }
         ]
       },
-      "id": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
-      "name": "Tarifa ?",
       "position": {
         "x": 290,
         "y": 260
       }
     },
     {
+      "id": "c761fe34-b475-4131-8daa-832bf398fe2f",
+      "name": "Valida nivel tension",
       "type": "decisionTableNode",
       "content": {
-        "hitPolicy": "first",
         "rules": [
           {
             "_id": "ca1c4edf-5896-4a19-a5d9-8be1865d80ef",
@@ -311,19 +312,20 @@
             "field": "nivel_tension"
           }
         ],
-        "passThrough": true,
+        "hitPolicy": "first",
         "inputField": null,
         "outputPath": null,
+        "passThrough": true,
         "executionMode": "single"
       },
-      "id": "c761fe34-b475-4131-8daa-832bf398fe2f",
-      "name": "Valida nivel tension",
       "position": {
         "x": -280,
         "y": 260
       }
     },
     {
+      "id": "64cfdd82-aea7-404b-b84b-e8778789c4cd",
+      "name": "Tension ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -345,14 +347,14 @@
           }
         ]
       },
-      "id": "64cfdd82-aea7-404b-b84b-e8778789c4cd",
-      "name": "Tension ?",
       "position": {
         "x": 940,
         "y": -175
       }
     },
     {
+      "id": "e4f50173-9f1d-4937-9f71-28091fd70f15",
+      "name": "Subnormal ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -369,17 +371,16 @@
           }
         ]
       },
-      "id": "e4f50173-9f1d-4937-9f71-28091fd70f15",
-      "name": "Subnormal ?",
       "position": {
         "x": 635,
         "y": -75
       }
     },
     {
+      "id": "a7fc36ac-41a7-4db4-8807-aa41e62057ae",
+      "name": "Valida subnormal",
       "type": "decisionTableNode",
       "content": {
-        "hitPolicy": "first",
         "rules": [
           {
             "_id": "d3aa93b6-4813-478e-9372-204acdfc9d35",
@@ -408,45 +409,46 @@
             "field": "subnormal"
           }
         ],
-        "passThrough": true,
+        "hitPolicy": "first",
         "inputField": null,
         "outputPath": null,
+        "passThrough": true,
         "executionMode": "single"
       },
-      "id": "a7fc36ac-41a7-4db4-8807-aa41e62057ae",
-      "name": "Valida subnormal",
       "position": {
         "x": 10,
         "y": 260
       }
     },
     {
+      "id": "4d79ade3-f726-442b-8aaf-00104291c2c2",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.comercial?.prices_and_method ?? [];\n  const targetId = 13; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "4d79ade3-f726-442b-8aaf-00104291c2c2",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1270,
         "y": -140
       }
     },
     {
+      "id": "89f47085-8fd1-4765-87b3-ef9bdee13f8d",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.comercial?.prices_and_method ?? [];\n  const targetId = 14; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "89f47085-8fd1-4765-87b3-ef9bdee13f8d",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1270,
         "y": -50
       }
     },
     {
+      "id": "52830f0a-119e-42f9-ad75-e46a93a0ae29",
+      "name": "priedad del activo ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -473,55 +475,57 @@
           }
         ]
       },
-      "id": "52830f0a-119e-42f9-ad75-e46a93a0ae29",
-      "name": "priedad del activo ?",
       "position": {
         "x": 900,
         "y": 150
       }
     },
     {
+      "id": "9bcf6f94-087b-4674-9a3f-6cd939da7fdc",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n\r\n  // --- 1. Asegurar estructura y obtener el id buscado ---\r\n  const data = input?.comercial?.prices_and_method ?? [];\r\n  const targetId = 15; \r\n\r\n  // --- 2. Buscar el objeto que coincida ---\r\n  const result = data.find(p => p.price_id === targetId);\r\n\r\n\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n    if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.prices_and_method = result;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
         "omitNodes": false
       },
-      "id": "9bcf6f94-087b-4674-9a3f-6cd939da7fdc",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1270,
         "y": 160
       }
     },
     {
+      "id": "ba83d59e-9616-4b2e-8e12-b856f34bb0cd",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.comercial?.prices_and_method ?? [];\n  const targetId = 16; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "ba83d59e-9616-4b2e-8e12-b856f34bb0cd",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1270,
         "y": 250
       }
     },
     {
+      "id": "c3d3cbc7-af6b-46e2-a70a-f5e297d2cf6a",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.comercial?.prices_and_method ?? [];\n  const targetId = 17; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "c3d3cbc7-af6b-46e2-a70a-f5e297d2cf6a",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1270,
         "y": 340
       }
     },
     {
+      "id": "52645c7a-1531-4a20-b484-9dff797ca979",
+      "name": "Error",
       "type": "expressionNode",
       "content": {
+        "inputField": null,
+        "outputPath": null,
         "expressions": [
           {
             "id": "86a0fd73-7583-4c79-9f0f-a3e8b00c906a",
@@ -540,20 +544,20 @@
           }
         ],
         "passThrough": true,
-        "inputField": null,
-        "outputPath": null,
         "executionMode": "single"
       },
-      "id": "52645c7a-1531-4a20-b484-9dff797ca979",
-      "name": "Error",
       "position": {
         "x": 1270,
         "y": 35
       }
     },
     {
+      "id": "1194a8c0-e8ea-4932-b4b9-d8fa4b28fbe2",
+      "name": "Error",
       "type": "expressionNode",
       "content": {
+        "inputField": null,
+        "outputPath": null,
         "expressions": [
           {
             "id": "86a0fd73-7583-4c79-9f0f-a3e8b00c906a",
@@ -572,18 +576,16 @@
           }
         ],
         "passThrough": true,
-        "inputField": null,
-        "outputPath": null,
         "executionMode": "single"
       },
-      "id": "1194a8c0-e8ea-4932-b4b9-d8fa4b28fbe2",
-      "name": "Error",
       "position": {
         "x": 1270,
         "y": 430
       }
     },
     {
+      "id": "5b66afee-2de7-4a51-91ef-682118b1e411",
+      "name": "Subnormal ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -600,27 +602,27 @@
           }
         ]
       },
-      "id": "5b66afee-2de7-4a51-91ef-682118b1e411",
-      "name": "Subnormal ?",
       "position": {
         "x": 630,
         "y": 590
       }
     },
     {
-      "type": "functionNode",
-      "content": {
-        "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n\r\n  // Objeto a insertar\r\n  const calculationMethod = {\r\n    calculation_method_id: \"401\",\r\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\r\n    calculation_method_description:\r\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\r\n  };\r\n\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n  if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.calculation_method = calculationMethod;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
-        "omitNodes": false
-      },
       "id": "20bd6d85-67e6-4c87-b086-8031706b8689",
       "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.industrial?.prices_and_method ?? [];\n  const targetId = 22; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
       "position": {
         "x": 940,
         "y": 550
       }
     },
     {
+      "id": "e554ae13-6e44-4327-8e29-3c663dba59a2",
+      "name": "Tension ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -647,53 +649,53 @@
           }
         ]
       },
-      "id": "e554ae13-6e44-4327-8e29-3c663dba59a2",
-      "name": "Tension ?",
       "position": {
         "x": 940,
         "y": 660
       }
     },
     {
-      "type": "functionNode",
-      "content": {
-        "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n\r\n  // --- 1. Asegurar estructura y obtener el id buscado ---\r\n  const data = input?.industrial?.prices_and_method ?? [];\r\n  const targetId = 17; \r\n\r\n  // --- 2. Buscar el objeto que coincida ---\r\n  const result = data.find(p => p.price_id === targetId);\r\n\r\n\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n    if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.prices_and_method = result;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
-        "omitNodes": false
-      },
       "id": "059a9dea-94ed-4554-9754-941db9fbf67b",
       "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.industrial?.prices_and_method ?? [];\n  const targetId = 19; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
       "position": {
         "x": 1260,
         "y": 600
       }
     },
     {
-      "type": "functionNode",
-      "content": {
-        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
-        "omitNodes": false
-      },
       "id": "2958280f-9236-4d14-9d41-fce49cbd3d17",
       "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.industrial?.prices_and_method ?? [];\n  const targetId = 20; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
       "position": {
         "x": 1260,
         "y": 695
       }
     },
     {
-      "type": "functionNode",
-      "content": {
-        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
-        "omitNodes": false
-      },
       "id": "f198f47e-555a-4baa-a254-f65d31d028cd",
       "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.industrial?.prices_and_method ?? [];\n  const targetId = 21; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
       "position": {
         "x": 1260,
         "y": 785
       }
     },
     {
+      "id": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
+      "name": "priedad del activo ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -709,66 +711,50 @@
             "isDefault": false
           },
           {
-            "id": "0973281c-9c9d-40fe-8b7e-ed8b034ff6b5",
-            "condition": "propiedad_del_activo == 'compartida'",
-            "isDefault": false
-          },
-          {
-            "id": "eb1030e5-9ffe-437b-9fd6-0054b3e15df3",
+            "id": "4096db66-eb77-400c-bcbe-120cf8aa9c30",
             "condition": "",
             "isDefault": true
           }
         ]
       },
-      "id": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
-      "name": "priedad del activo ?",
       "position": {
         "x": 1260,
         "y": 885
       }
     },
     {
-      "type": "functionNode",
-      "content": {
-        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
-        "omitNodes": false
-      },
       "id": "6294103b-67c3-43f3-a90c-db758326ac23",
       "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.industrial?.prices_and_method ?? [];\n  const targetId = 17; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
       "position": {
         "x": 1550,
         "y": 890
       }
     },
     {
-      "type": "functionNode",
-      "content": {
-        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
-        "omitNodes": false
-      },
       "id": "614a6969-8e76-47f1-8ea2-83bc07844262",
       "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
+      "type": "functionNode",
+      "content": {
+        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n\n  // --- 1. Asegurar estructura y obtener el id buscado ---\n  const data = input?.industrial?.prices_and_method ?? [];\n  const targetId = 18; \n\n  // --- 2. Buscar el objeto que coincida ---\n  const result = data.find(p => p.price_id === targetId);\n\n\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n    if (target) {\n    // Agregar el objeto dentro del item existente\n    target.prices_and_method = result;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
+        "omitNodes": false
+      },
       "position": {
         "x": 1550,
         "y": 985
       }
     },
     {
-      "type": "functionNode",
-      "content": {
-        "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
-        "omitNodes": false
-      },
-      "id": "4d411e28-360a-4202-9a9a-23d5e1d79cc1",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
-      "position": {
-        "x": 1550,
-        "y": 1080
-      }
-    },
-    {
+      "id": "80a29f46-eccb-4d41-b9c1-aafecd0d5bac",
+      "name": "Error",
       "type": "expressionNode",
       "content": {
+        "inputField": null,
+        "outputPath": null,
         "expressions": [
           {
             "id": "86a0fd73-7583-4c79-9f0f-a3e8b00c906a",
@@ -787,18 +773,16 @@
           }
         ],
         "passThrough": true,
-        "inputField": null,
-        "outputPath": null,
         "executionMode": "single"
       },
-      "id": "80a29f46-eccb-4d41-b9c1-aafecd0d5bac",
-      "name": "Error",
       "position": {
         "x": 1550,
-        "y": 1175
+        "y": 1085
       }
     },
     {
+      "id": "838fcd55-56de-4d49-9a89-f2be55256a05",
+      "name": "Subnormal ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -815,14 +799,14 @@
           }
         ]
       },
-      "id": "838fcd55-56de-4d49-9a89-f2be55256a05",
-      "name": "Subnormal ?",
       "position": {
         "x": 630,
         "y": 1355
       }
     },
     {
+      "id": "f5f618f3-9f30-45fa-830b-3473e1f49ba3",
+      "name": "Tension ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -839,40 +823,40 @@
           }
         ]
       },
-      "id": "f5f618f3-9f30-45fa-830b-3473e1f49ba3",
-      "name": "Tension ?",
       "position": {
         "x": 940,
         "y": 1260
       }
     },
     {
+      "id": "9f5fc8e5-9375-4b86-9354-4e09e695eb4d",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "9f5fc8e5-9375-4b86-9354-4e09e695eb4d",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1260,
         "y": 1270
       }
     },
     {
+      "id": "8bf3a71b-f7b6-4f0e-91cc-7fa92754b9ae",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "8bf3a71b-f7b6-4f0e-91cc-7fa92754b9ae",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1260,
         "y": 1365
       }
     },
     {
+      "id": "3e61f66e-c887-4580-99a4-0477d1ac9c9a",
+      "name": "Tension ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -894,40 +878,40 @@
           }
         ]
       },
-      "id": "3e61f66e-c887-4580-99a4-0477d1ac9c9a",
-      "name": "Tension ?",
       "position": {
         "x": 945,
         "y": 1500
       }
     },
     {
+      "id": "17477f94-d90e-43ae-9419-3101157371bf",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n\r\n  // --- 1. Asegurar estructura y obtener el id buscado ---\r\n  const data = input?.Industrial?.prices_and_method ?? [];\r\n  const targetId = 17; \r\n\r\n  // --- 2. Buscar el objeto que coincida ---\r\n  const result = data.find(p => p.price_id === targetId);\r\n\r\n\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n    if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.prices_and_method = result;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
         "omitNodes": false
       },
-      "id": "17477f94-d90e-43ae-9419-3101157371bf",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1260,
         "y": 1505
       }
     },
     {
+      "id": "3ba12795-ecbb-4940-a640-7b97664334fb",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "3ba12795-ecbb-4940-a640-7b97664334fb",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1260,
         "y": 1600
       }
     },
     {
+      "id": "9db61203-52fe-4d7d-a7e4-bdf787ab1d51",
+      "name": "priedad del activo ?",
       "type": "switchNode",
       "content": {
         "hitPolicy": "first",
@@ -954,55 +938,57 @@
           }
         ]
       },
-      "id": "9db61203-52fe-4d7d-a7e4-bdf787ab1d51",
-      "name": "priedad del activo ?",
       "position": {
         "x": 1200,
         "y": 1815
       }
     },
     {
+      "id": "901cc339-e576-436d-944f-d09c095967ea",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n\r\n  // --- 1. Asegurar estructura y obtener el id buscado ---\r\n  const data = input?.oficial?.prices_and_method ?? [];\r\n  const targetId = 18; \r\n\r\n  // --- 2. Buscar el objeto que coincida ---\r\n  const result = data.find(p => p.price_id === targetId);\r\n\r\n\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n    if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.prices_and_method = result;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
         "omitNodes": false
       },
-      "id": "901cc339-e576-436d-944f-d09c095967ea",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1550,
         "y": 1695
       }
     },
     {
+      "id": "ebb0dda9-cbf2-4a75-93bc-0d53e055a98c",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n\r\n  // --- 1. Asegurar estructura y obtener el id buscado ---\r\n  const data = input?.oficial?.prices_and_method ?? [];\r\n  const targetId = 19; \r\n\r\n  // --- 2. Buscar el objeto que coincida ---\r\n  const result = data.find(p => p.price_id === targetId);\r\n\r\n\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n    if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.prices_and_method = result;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
         "omitNodes": false
       },
-      "id": "ebb0dda9-cbf2-4a75-93bc-0d53e055a98c",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1550,
         "y": 1795
       }
     },
     {
+      "id": "5ae19eb1-f8a0-4e04-80c9-34d4276f4b41",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\n\n/** @type {Handler} **/\nexport const handler = async (input) => {\n\n  const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\n\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\n    return {\n      ...input,\n        result: {\n          rule_description: 'parameter_billingItem_code for rule not found',\n          status: 'ERROR',\n        }\n    };\n  };\n  // Asegurar contenedores\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\n  const workOrder = input.tsl_wo_work_order_attribute;\n\n  if (!workOrder.billing_items) {\n    workOrder.billing_items = {\n      active_energy_billing_items: [],\n      public_lighting_billing_items: null,\n      cleaning_billing_items: null,\n    };\n  }\n\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\n    workOrder.billing_items.active_energy_billing_items = [];\n  }\n\n  const items = workOrder.billing_items.active_energy_billing_items;\n\n  // Objeto a insertar\n  const calculationMethod = {\n    calculation_method_id: \"401\",\n    calculation_method_code: \"AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO\",\n    calculation_method_description:\n      \"Metodo de calculo de consumo de energia activa por bloques de consumo\",\n  };\n\n  // Buscar el item con billing_item_code === \"consumo\"\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\n\n  if (target) {\n    // Agregar el objeto dentro del item existente\n    target.calculation_method = calculationMethod;\n  } else {\n    \n    return {\n      ...input,\n      result : {\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\n        status_type : \"ERROR\"\n      }\n    }\n  }\n\n  return {\n    ...input,\n    result : {\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\n        status_description : \"Regla finalizada de forma correcta\",\n        status_type : \"OK\"\n    }\n  };\n};\n",
         "omitNodes": false
       },
-      "id": "5ae19eb1-f8a0-4e04-80c9-34d4276f4b41",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 1550,
         "y": 1890
       }
     },
     {
+      "id": "e5be126f-1e2e-4e00-a378-ca03d9d8e0fe",
+      "name": "Error",
       "type": "expressionNode",
       "content": {
+        "inputField": null,
+        "outputPath": null,
         "expressions": [
           {
             "id": "86a0fd73-7583-4c79-9f0f-a3e8b00c906a",
@@ -1021,20 +1007,20 @@
           }
         ],
         "passThrough": true,
-        "inputField": null,
-        "outputPath": null,
         "executionMode": "single"
       },
-      "id": "e5be126f-1e2e-4e00-a378-ca03d9d8e0fe",
-      "name": "Error",
       "position": {
         "x": 1550,
         "y": 1985
       }
     },
     {
+      "id": "aa316c63-c14f-4966-8e2c-eccd6a9cae1e",
+      "name": "Error",
       "type": "expressionNode",
       "content": {
+        "inputField": null,
+        "outputPath": null,
         "expressions": [
           {
             "id": "86a0fd73-7583-4c79-9f0f-a3e8b00c906a",
@@ -1053,38 +1039,34 @@
           }
         ],
         "passThrough": true,
-        "inputField": null,
-        "outputPath": null,
         "executionMode": "single"
       },
-      "id": "aa316c63-c14f-4966-8e2c-eccd6a9cae1e",
-      "name": "Error",
       "position": {
         "x": 780,
         "y": 2455
       }
     },
     {
+      "id": "2c5239c6-0dc3-42b5-842d-4ccbedc6d0b0",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n\r\n  // --- 1. Asegurar estructura y obtener el id buscado ---\r\n  const data = input?.residencial?.prices_and_method ?? [];\r\n  const targetId = 11; \r\n\r\n  // --- 2. Buscar el objeto que coincida ---\r\n  const result = data.find(p => p.price_id === targetId);\r\n\r\n\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n    if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.prices_and_method = result;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
         "omitNodes": false
       },
-      "id": "2c5239c6-0dc3-42b5-842d-4ccbedc6d0b0",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 940,
         "y": -445
       }
     },
     {
+      "id": "eb02e573-94c1-48ce-b785-1c57c5adc136",
+      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "type": "functionNode",
       "content": {
         "source": "import zen from 'zen';\r\n\r\n/** @type {Handler} **/\r\nexport const handler = async (input) => {\r\n\r\n   const billingItemCode = input?.parametros_de_la_regla?.parameter_billingItem_code ?? null;\r\n\r\n  if (!billingItemCode || billingItemCode == \"null\" || billingItemCode == \" \"  ) {\r\n    return {\r\n      ...input,\r\n        result: {\r\n          rule_description: 'parameter_billingItem_code for rule not found',\r\n          status: 'ERROR',\r\n        }\r\n    };\r\n  };\r\n\r\n  // --- 1. Asegurar estructura y obtener el id buscado ---\r\n  const data = input?.residencial?.prices_and_method ?? [];\r\n  const targetId = 12; \r\n\r\n  // --- 2. Buscar el objeto que coincida ---\r\n  const result = data.find(p => p.price_id === targetId);\r\n\r\n\r\n  // Asegurar contenedores\r\n  if (!input.tsl_wo_work_order_attribute) input.tsl_wo_work_order_attribute = {};\r\n  const workOrder = input.tsl_wo_work_order_attribute;\r\n\r\n  if (!workOrder.billing_items) {\r\n    workOrder.billing_items = {\r\n      active_energy_billing_items: [],\r\n      public_lighting_billing_items: null,\r\n      cleaning_billing_items: null,\r\n    };\r\n  }\r\n\r\n  if (!Array.isArray(workOrder.billing_items.active_energy_billing_items)) {\r\n    workOrder.billing_items.active_energy_billing_items = [];\r\n  }\r\n\r\n  const items = workOrder.billing_items.active_energy_billing_items;\r\n  // Buscar el item con billing_item_code === \"consumo\"\r\n  const target = items.find(it => it?.billing_item_code === billingItemCode);\r\n\r\n    if (target) {\r\n    // Agregar el objeto dentro del item existente\r\n    target.prices_and_method = result;\r\n  } else {\r\n    \r\n    return {\r\n      ...input,\r\n      result : {\r\n        status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Error al encontrar el parameter_billingItem_code \" + billingItemCode + \" en el objeto billing_items de la WorkOrder\",\r\n        status_type : \"ERROR\"\r\n      }\r\n    }\r\n  }\r\n\r\n  return {\r\n    ...input,\r\n    result : {\r\n      status_code : \"AFINIA-EN001-ENRE001-METODOS DE CALCULO-CONSUMO DE ENERGIA ACTIVA\",\r\n        status_description : \"Regla finalizada de forma correcta\",\r\n        status_type : \"OK\"\r\n    }\r\n  };\r\n};\r\n",
         "omitNodes": false
       },
-      "id": "eb02e573-94c1-48ce-b785-1c57c5adc136",
-      "name": "AFINIA-EN001-ENRE001-CONCEPTO-CONSUMO DE ENERGIA ACTIVO",
       "position": {
         "x": 940,
         "y": -360
@@ -1094,474 +1076,419 @@
   "edges": [
     {
       "id": "712d49bf-317f-46bd-bc2a-0681f6ecbb04",
+      "type": "edge",
       "sourceId": "0133f075-b4ef-42c8-86b8-abe8cd284177",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "557f385a-ade7-49a2-a377-4d6fc4f9d91a",
+      "type": "edge",
       "sourceId": "009e04d3-20ca-4569-a19f-86f8d331420c",
-      "targetId": "fa01b2ac-9e39-4c77-a161-ecc465ccf075",
-      "type": "edge"
+      "targetId": "fa01b2ac-9e39-4c77-a161-ecc465ccf075"
     },
     {
       "id": "c8964c59-136e-45e7-bbe0-5a81a2535824",
+      "type": "edge",
       "sourceId": "cc106125-72c3-45c8-9404-192b49fbb76b",
       "targetId": "0133f075-b4ef-42c8-86b8-abe8cd284177",
-      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334",
-      "type": "edge"
-    },
-    {
-      "id": "8626717c-7779-4bed-bbd3-5e4095576a76",
-      "sourceId": "cc106125-72c3-45c8-9404-192b49fbb76b",
-      "targetId": "4279bc5a-58c0-4dbf-8d4e-0fa2a52e3786",
-      "sourceHandle": "eb1030e5-9ffe-437b-9fd6-0054b3e15df3",
-      "type": "edge"
+      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334"
     },
     {
       "id": "2f800e1e-cb47-48a4-9343-05010d2da6e5",
+      "type": "edge",
       "sourceId": "4279bc5a-58c0-4dbf-8d4e-0fa2a52e3786",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "517487f9-a0aa-4a73-9384-5d10cda18845",
+      "type": "edge",
       "sourceId": "fa01b2ac-9e39-4c77-a161-ecc465ccf075",
-      "targetId": "9cfd840f-ed8b-4233-a2e8-c6fc0c281d08",
-      "type": "edge"
+      "targetId": "9cfd840f-ed8b-4233-a2e8-c6fc0c281d08"
     },
     {
       "id": "9c9a69ce-5421-4b7e-aaca-c28d7ad81d22",
+      "type": "edge",
       "sourceId": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
       "targetId": "cc106125-72c3-45c8-9404-192b49fbb76b",
-      "sourceHandle": "d3ab7041-bfc8-4f48-86c8-50f62630b3bf",
-      "type": "edge"
+      "sourceHandle": "d3ab7041-bfc8-4f48-86c8-50f62630b3bf"
     },
     {
       "id": "cf1ebc72-dadf-46ec-9f4c-29b94895a0e1",
+      "type": "edge",
       "sourceId": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
       "targetId": "e4f50173-9f1d-4937-9f71-28091fd70f15",
-      "sourceHandle": "bc2d9bd8-b49b-4580-b9a7-d8f8a7a412a1",
-      "type": "edge"
+      "sourceHandle": "bc2d9bd8-b49b-4580-b9a7-d8f8a7a412a1"
     },
     {
       "id": "deb2052b-39e2-49e7-8a96-199dbbe7f9a7",
+      "type": "edge",
       "sourceId": "c761fe34-b475-4131-8daa-832bf398fe2f",
-      "targetId": "a7fc36ac-41a7-4db4-8807-aa41e62057ae",
-      "type": "edge"
+      "targetId": "a7fc36ac-41a7-4db4-8807-aa41e62057ae"
     },
     {
       "id": "59614875-e299-401b-bad3-3645ab10046d",
+      "type": "edge",
       "sourceId": "a7fc36ac-41a7-4db4-8807-aa41e62057ae",
-      "targetId": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
-      "type": "edge"
+      "targetId": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711"
     },
     {
       "id": "d7a1c4a1-dd1b-4ed3-95a3-4772839bc59f",
+      "type": "edge",
       "sourceId": "e4f50173-9f1d-4937-9f71-28091fd70f15",
       "targetId": "64cfdd82-aea7-404b-b84b-e8778789c4cd",
-      "sourceHandle": "ee269d9e-25be-46ad-b0a2-64a8f84d9588",
-      "type": "edge"
+      "sourceHandle": "ee269d9e-25be-46ad-b0a2-64a8f84d9588"
     },
     {
       "id": "10ed201a-5a17-4663-9b48-01c705583d2c",
+      "type": "edge",
       "sourceId": "64cfdd82-aea7-404b-b84b-e8778789c4cd",
       "targetId": "4d79ade3-f726-442b-8aaf-00104291c2c2",
-      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce",
-      "type": "edge"
+      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce"
     },
     {
       "id": "8c19a7f2-c21c-43a4-8591-62334433541e",
+      "type": "edge",
       "sourceId": "e4f50173-9f1d-4937-9f71-28091fd70f15",
       "targetId": "52830f0a-119e-42f9-ad75-e46a93a0ae29",
-      "sourceHandle": "f90f03e6-65b3-4d34-9a4c-4ee93c787527",
-      "type": "edge"
+      "sourceHandle": "f90f03e6-65b3-4d34-9a4c-4ee93c787527"
     },
     {
       "id": "61803ec4-531e-43fc-bdf5-fd85fb01f2b5",
+      "type": "edge",
       "sourceId": "52830f0a-119e-42f9-ad75-e46a93a0ae29",
       "targetId": "9bcf6f94-087b-4674-9a3f-6cd939da7fdc",
-      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334",
-      "type": "edge"
+      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334"
     },
     {
       "id": "bc227a65-cfe9-441d-8502-a016b4170088",
+      "type": "edge",
       "sourceId": "52830f0a-119e-42f9-ad75-e46a93a0ae29",
       "targetId": "ba83d59e-9616-4b2e-8e12-b856f34bb0cd",
-      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491",
-      "type": "edge"
-    },
-    {
-      "id": "b89e56bb-2e2a-40d8-b276-7ed4aeb44c54",
-      "sourceId": "52830f0a-119e-42f9-ad75-e46a93a0ae29",
-      "targetId": "c3d3cbc7-af6b-46e2-a70a-f5e297d2cf6a",
-      "sourceHandle": "0973281c-9c9d-40fe-8b7e-ed8b034ff6b5",
-      "type": "edge"
-    },
-    {
-      "id": "700ad7a9-c985-452c-9963-6738ee67a31a",
-      "sourceId": "52830f0a-119e-42f9-ad75-e46a93a0ae29",
-      "targetId": "1194a8c0-e8ea-4932-b4b9-d8fa4b28fbe2",
-      "sourceHandle": "eb1030e5-9ffe-437b-9fd6-0054b3e15df3",
-      "type": "edge"
+      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491"
     },
     {
       "id": "8433a953-628f-492e-b21d-110c6298c541",
+      "type": "edge",
       "sourceId": "4d79ade3-f726-442b-8aaf-00104291c2c2",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "01345aa0-4019-40fc-882f-83e6adf6a9f2",
+      "type": "edge",
       "sourceId": "89f47085-8fd1-4765-87b3-ef9bdee13f8d",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "470a071d-fcc5-4f83-b301-977e5764ada1",
+      "type": "edge",
       "sourceId": "52645c7a-1531-4a20-b484-9dff797ca979",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "583d70da-eb27-4ebd-981d-9b47dcdccaad",
+      "type": "edge",
       "sourceId": "9bcf6f94-087b-4674-9a3f-6cd939da7fdc",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "2cc5526f-ccd9-40ce-bc79-e32d2b449ed9",
+      "type": "edge",
       "sourceId": "ba83d59e-9616-4b2e-8e12-b856f34bb0cd",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "37b11885-0ed5-4e03-8699-461e1954ba7a",
+      "type": "edge",
       "sourceId": "c3d3cbc7-af6b-46e2-a70a-f5e297d2cf6a",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "037abe5c-b9db-4930-b1af-f6a5c74ac5f5",
+      "type": "edge",
       "sourceId": "1194a8c0-e8ea-4932-b4b9-d8fa4b28fbe2",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "dda12288-c841-4d20-a100-279859236651",
+      "type": "edge",
       "sourceId": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
       "targetId": "5b66afee-2de7-4a51-91ef-682118b1e411",
-      "sourceHandle": "0f16a23a-1c3a-44d0-a02a-171f4dfc49f8",
-      "type": "edge"
+      "sourceHandle": "0f16a23a-1c3a-44d0-a02a-171f4dfc49f8"
     },
     {
       "id": "f3672765-7413-4ad7-872c-8afff12badfa",
+      "type": "edge",
       "sourceId": "5b66afee-2de7-4a51-91ef-682118b1e411",
       "targetId": "20bd6d85-67e6-4c87-b086-8031706b8689",
-      "sourceHandle": "ee269d9e-25be-46ad-b0a2-64a8f84d9588",
-      "type": "edge"
+      "sourceHandle": "ee269d9e-25be-46ad-b0a2-64a8f84d9588"
     },
     {
       "id": "f617f2f6-f30a-429a-9937-a19b0ec02acb",
+      "type": "edge",
       "sourceId": "5b66afee-2de7-4a51-91ef-682118b1e411",
       "targetId": "e554ae13-6e44-4327-8e29-3c663dba59a2",
-      "sourceHandle": "f90f03e6-65b3-4d34-9a4c-4ee93c787527",
-      "type": "edge"
+      "sourceHandle": "f90f03e6-65b3-4d34-9a4c-4ee93c787527"
     },
     {
       "id": "208dbbb3-72cb-4ecb-8ac6-a83bc3cf1833",
+      "type": "edge",
       "sourceId": "e554ae13-6e44-4327-8e29-3c663dba59a2",
       "targetId": "059a9dea-94ed-4554-9754-941db9fbf67b",
-      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce",
-      "type": "edge"
+      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce"
     },
     {
       "id": "8ee4c218-b091-439f-9f2b-220a13658687",
+      "type": "edge",
       "sourceId": "e554ae13-6e44-4327-8e29-3c663dba59a2",
       "targetId": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
-      "sourceHandle": "61c28d7b-97e3-47b4-8c4b-2584d2c3933c",
-      "type": "edge"
+      "sourceHandle": "61c28d7b-97e3-47b4-8c4b-2584d2c3933c"
     },
     {
       "id": "c53c3e07-c970-4415-bf01-77836bbc4793",
+      "type": "edge",
       "sourceId": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
       "targetId": "6294103b-67c3-43f3-a90c-db758326ac23",
-      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334",
-      "type": "edge"
+      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334"
     },
     {
       "id": "a59fcc62-6742-4b1e-b3ae-e957d04c7df6",
+      "type": "edge",
       "sourceId": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
       "targetId": "614a6969-8e76-47f1-8ea2-83bc07844262",
-      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491",
-      "type": "edge"
-    },
-    {
-      "id": "7df8173d-a100-4092-aea5-07bdae4c37ac",
-      "sourceId": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
-      "targetId": "4d411e28-360a-4202-9a9a-23d5e1d79cc1",
-      "sourceHandle": "0973281c-9c9d-40fe-8b7e-ed8b034ff6b5",
-      "type": "edge"
-    },
-    {
-      "id": "bce53014-ff42-458f-ba9b-9bc1fd4f8560",
-      "sourceId": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
-      "targetId": "80a29f46-eccb-4d41-b9c1-aafecd0d5bac",
-      "sourceHandle": "eb1030e5-9ffe-437b-9fd6-0054b3e15df3",
-      "type": "edge"
+      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491"
     },
     {
       "id": "f4a6c184-7eac-44ee-963c-3189d86f46e4",
+      "type": "edge",
       "sourceId": "20bd6d85-67e6-4c87-b086-8031706b8689",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "42d8cba8-3fb3-4384-b90e-28a415a9d527",
+      "type": "edge",
       "sourceId": "059a9dea-94ed-4554-9754-941db9fbf67b",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "4ae69545-7c38-4d04-a9df-8a87b15f0dae",
+      "type": "edge",
       "sourceId": "2958280f-9236-4d14-9d41-fce49cbd3d17",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "07315533-55e2-4246-b631-60747d8d30ee",
+      "type": "edge",
       "sourceId": "f198f47e-555a-4baa-a254-f65d31d028cd",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "aa28720a-7f34-4ad7-a46e-d17fad3c5bb3",
+      "type": "edge",
       "sourceId": "6294103b-67c3-43f3-a90c-db758326ac23",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "4ff61274-3441-474f-a0bd-c2d1ee530e30",
+      "type": "edge",
       "sourceId": "614a6969-8e76-47f1-8ea2-83bc07844262",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
-    },
-    {
-      "id": "aef59456-15f2-4a76-ac98-1dc2864c099c",
-      "sourceId": "4d411e28-360a-4202-9a9a-23d5e1d79cc1",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "22430750-d693-4e5e-a46d-7b257af78c09",
+      "type": "edge",
       "sourceId": "80a29f46-eccb-4d41-b9c1-aafecd0d5bac",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "09a6c234-a873-4d7c-9151-877b0fef2a98",
+      "type": "edge",
       "sourceId": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
       "targetId": "838fcd55-56de-4d49-9a89-f2be55256a05",
-      "sourceHandle": "48d9d9a3-5e56-4d65-96b4-4dcb79a2b0d1",
-      "type": "edge"
+      "sourceHandle": "48d9d9a3-5e56-4d65-96b4-4dcb79a2b0d1"
     },
     {
       "id": "13f983cd-ef93-4421-8624-b2185b50394e",
+      "type": "edge",
       "sourceId": "838fcd55-56de-4d49-9a89-f2be55256a05",
       "targetId": "f5f618f3-9f30-45fa-830b-3473e1f49ba3",
-      "sourceHandle": "ee269d9e-25be-46ad-b0a2-64a8f84d9588",
-      "type": "edge"
+      "sourceHandle": "ee269d9e-25be-46ad-b0a2-64a8f84d9588"
     },
     {
       "id": "dc02746e-f53d-4cbe-9f8b-379f8c8368aa",
+      "type": "edge",
       "sourceId": "f5f618f3-9f30-45fa-830b-3473e1f49ba3",
       "targetId": "9f5fc8e5-9375-4b86-9354-4e09e695eb4d",
-      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce",
-      "type": "edge"
+      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce"
     },
     {
       "id": "70a30964-cdfb-461b-a80d-a2547e89ecbb",
+      "type": "edge",
       "sourceId": "f5f618f3-9f30-45fa-830b-3473e1f49ba3",
       "targetId": "8bf3a71b-f7b6-4f0e-91cc-7fa92754b9ae",
-      "sourceHandle": "61c28d7b-97e3-47b4-8c4b-2584d2c3933c",
-      "type": "edge"
+      "sourceHandle": "61c28d7b-97e3-47b4-8c4b-2584d2c3933c"
     },
     {
       "id": "63301dde-f97f-4c77-bfee-409e07d13085",
+      "type": "edge",
       "sourceId": "838fcd55-56de-4d49-9a89-f2be55256a05",
       "targetId": "3e61f66e-c887-4580-99a4-0477d1ac9c9a",
-      "sourceHandle": "f90f03e6-65b3-4d34-9a4c-4ee93c787527",
-      "type": "edge"
+      "sourceHandle": "f90f03e6-65b3-4d34-9a4c-4ee93c787527"
     },
     {
       "id": "cccaf004-b672-42cb-8ffa-cd41c80bbad4",
+      "type": "edge",
       "sourceId": "3e61f66e-c887-4580-99a4-0477d1ac9c9a",
       "targetId": "17477f94-d90e-43ae-9419-3101157371bf",
-      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce",
-      "type": "edge"
+      "sourceHandle": "899ee510-70e5-4a8c-bc55-6ad333ee01ce"
     },
     {
       "id": "c66a8f51-1042-404a-9ab4-da7dd9a3caf6",
+      "type": "edge",
       "sourceId": "3e61f66e-c887-4580-99a4-0477d1ac9c9a",
       "targetId": "3ba12795-ecbb-4940-a640-7b97664334fb",
-      "sourceHandle": "e6689778-4c72-461d-8a9c-8ad22c9f21fe",
-      "type": "edge"
+      "sourceHandle": "e6689778-4c72-461d-8a9c-8ad22c9f21fe"
     },
     {
       "id": "31a2370e-52cc-4e11-aeb0-dad081c7b6db",
+      "type": "edge",
       "sourceId": "3e61f66e-c887-4580-99a4-0477d1ac9c9a",
       "targetId": "9db61203-52fe-4d7d-a7e4-bdf787ab1d51",
-      "sourceHandle": "61c28d7b-97e3-47b4-8c4b-2584d2c3933c",
-      "type": "edge"
+      "sourceHandle": "61c28d7b-97e3-47b4-8c4b-2584d2c3933c"
     },
     {
       "id": "13255ad5-dde1-4056-b05d-9dccd49e127d",
+      "type": "edge",
       "sourceId": "9db61203-52fe-4d7d-a7e4-bdf787ab1d51",
       "targetId": "901cc339-e576-436d-944f-d09c095967ea",
-      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334",
-      "type": "edge"
+      "sourceHandle": "923530d9-a939-43be-b9d9-b2a4db98b334"
     },
     {
       "id": "44767f7a-7e5b-4fe7-8e88-be74b902c60e",
+      "type": "edge",
       "sourceId": "9db61203-52fe-4d7d-a7e4-bdf787ab1d51",
       "targetId": "ebb0dda9-cbf2-4a75-93bc-0d53e055a98c",
-      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491",
-      "type": "edge"
-    },
-    {
-      "id": "549fa5c1-dd0f-40d6-82ba-4eeee9b69980",
-      "sourceId": "9db61203-52fe-4d7d-a7e4-bdf787ab1d51",
-      "targetId": "5ae19eb1-f8a0-4e04-80c9-34d4276f4b41",
-      "sourceHandle": "0973281c-9c9d-40fe-8b7e-ed8b034ff6b5",
-      "type": "edge"
-    },
-    {
-      "id": "425d5be9-63c5-4ec6-9bc2-0d39bb3b530b",
-      "sourceId": "9db61203-52fe-4d7d-a7e4-bdf787ab1d51",
-      "targetId": "e5be126f-1e2e-4e00-a378-ca03d9d8e0fe",
-      "sourceHandle": "eb1030e5-9ffe-437b-9fd6-0054b3e15df3",
-      "type": "edge"
+      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491"
     },
     {
       "id": "7e6df0fc-7321-4b32-8e16-1bb1b2e798ee",
+      "type": "edge",
       "sourceId": "9f5fc8e5-9375-4b86-9354-4e09e695eb4d",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "ede2e238-38ce-4ec3-ab9b-8574525e1661",
+      "type": "edge",
       "sourceId": "8bf3a71b-f7b6-4f0e-91cc-7fa92754b9ae",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "c0f526d5-0ed9-499f-a3be-602e40f3062d",
+      "type": "edge",
       "sourceId": "17477f94-d90e-43ae-9419-3101157371bf",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "f4b1a8a7-a668-4455-9758-094410737ba9",
+      "type": "edge",
       "sourceId": "3ba12795-ecbb-4940-a640-7b97664334fb",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "ab6e69db-3d55-4fa2-9f38-bf5c959cc2d5",
+      "type": "edge",
       "sourceId": "901cc339-e576-436d-944f-d09c095967ea",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "73a9e485-c9e0-45ac-8663-0af754d94388",
+      "type": "edge",
       "sourceId": "ebb0dda9-cbf2-4a75-93bc-0d53e055a98c",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "73b6d5de-72bb-4634-a15e-161879637fe9",
+      "type": "edge",
       "sourceId": "5ae19eb1-f8a0-4e04-80c9-34d4276f4b41",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "ba068fb9-f59c-49f8-a4c7-24f43221c92d",
+      "type": "edge",
       "sourceId": "e5be126f-1e2e-4e00-a378-ca03d9d8e0fe",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "a55b7e1b-b217-4225-956d-009de744af47",
+      "type": "edge",
       "sourceId": "9cfd840f-ed8b-4233-a2e8-c6fc0c281d08",
-      "targetId": "c761fe34-b475-4131-8daa-832bf398fe2f",
-      "type": "edge"
+      "targetId": "c761fe34-b475-4131-8daa-832bf398fe2f"
     },
     {
       "id": "0561cd97-4195-4f25-a936-e86f02a5508e",
+      "type": "edge",
       "sourceId": "d41f90ed-8cc7-4ac9-89ea-ce699e7ec711",
       "targetId": "aa316c63-c14f-4966-8e2c-eccd6a9cae1e",
-      "sourceHandle": "934a1aad-9137-4b72-b707-ce924cf72766",
-      "type": "edge"
+      "sourceHandle": "934a1aad-9137-4b72-b707-ce924cf72766"
     },
     {
       "id": "2c428234-3f9a-4515-81f3-65e7e7b6d2a7",
+      "type": "edge",
       "sourceId": "aa316c63-c14f-4966-8e2c-eccd6a9cae1e",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "29fe774e-7d62-43eb-b906-61596e67f4c2",
+      "type": "edge",
       "sourceId": "e554ae13-6e44-4327-8e29-3c663dba59a2",
       "targetId": "2958280f-9236-4d14-9d41-fce49cbd3d17",
-      "sourceHandle": "e6689778-4c72-461d-8a9c-8ad22c9f21fe",
-      "type": "edge"
+      "sourceHandle": "e6689778-4c72-461d-8a9c-8ad22c9f21fe"
     },
     {
       "id": "b502c041-40d6-4d1c-8a6f-c747e9d480b0",
+      "type": "edge",
       "sourceId": "e554ae13-6e44-4327-8e29-3c663dba59a2",
       "targetId": "f198f47e-555a-4baa-a254-f65d31d028cd",
-      "sourceHandle": "e3b6ff90-ae0b-4808-b986-0c61c832f55a",
-      "type": "edge"
+      "sourceHandle": "e3b6ff90-ae0b-4808-b986-0c61c832f55a"
     },
     {
       "id": "ea25acb6-0513-4728-bfe9-d646e7c6b68d",
+      "type": "edge",
       "sourceId": "64cfdd82-aea7-404b-b84b-e8778789c4cd",
       "targetId": "52645c7a-1531-4a20-b484-9dff797ca979",
-      "sourceHandle": "e3b6ff90-ae0b-4808-b986-0c61c832f55a",
-      "type": "edge"
+      "sourceHandle": "e3b6ff90-ae0b-4808-b986-0c61c832f55a"
     },
     {
       "id": "dd7806a1-7150-407d-aaec-cc73c5fa7a22",
+      "type": "edge",
       "sourceId": "64cfdd82-aea7-404b-b84b-e8778789c4cd",
       "targetId": "89f47085-8fd1-4765-87b3-ef9bdee13f8d",
-      "sourceHandle": "e6689778-4c72-461d-8a9c-8ad22c9f21fe",
-      "type": "edge"
+      "sourceHandle": "e6689778-4c72-461d-8a9c-8ad22c9f21fe"
     },
     {
       "id": "ca7fdd47-1ed6-4104-92c4-7972b0413e55",
+      "type": "edge",
       "sourceId": "cc106125-72c3-45c8-9404-192b49fbb76b",
       "targetId": "2c5239c6-0dc3-42b5-842d-4ccbedc6d0b0",
-      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491",
-      "type": "edge"
+      "sourceHandle": "8f3c3a7b-809b-4770-a310-7fb0468a5491"
     },
     {
       "id": "6a56803e-7ff7-41af-a43b-fa8aae84693b",
+      "type": "edge",
       "sourceId": "2c5239c6-0dc3-42b5-842d-4ccbedc6d0b0",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
-    },
-    {
-      "id": "2ae3b3e0-08be-431e-b796-98ea5d2fecd2",
-      "sourceId": "cc106125-72c3-45c8-9404-192b49fbb76b",
-      "targetId": "eb02e573-94c1-48ce-b785-1c57c5adc136",
-      "sourceHandle": "0973281c-9c9d-40fe-8b7e-ed8b034ff6b5",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
     },
     {
       "id": "fff8662c-f78b-412b-afde-3fd802263192",
+      "type": "edge",
       "sourceId": "eb02e573-94c1-48ce-b785-1c57c5adc136",
-      "targetId": "8022097d-69bd-41c1-b461-829043b16657",
-      "type": "edge"
+      "targetId": "8022097d-69bd-41c1-b461-829043b16657"
+    },
+    {
+      "id": "7f97c74d-a1ad-4b30-941d-dc9857a47fa1",
+      "type": "edge",
+      "sourceId": "1e900b92-f250-4ba5-996d-157d9f2ba43b",
+      "targetId": "80a29f46-eccb-4d41-b9c1-aafecd0d5bac",
+      "sourceHandle": "4096db66-eb77-400c-bcbe-120cf8aa9c30"
     }
   ]
 }

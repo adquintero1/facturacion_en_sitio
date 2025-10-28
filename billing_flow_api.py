@@ -2,8 +2,11 @@
 API endpoints para el flujo de facturación
 """
 from fastapi import APIRouter, HTTPException, Query, Body
+from fastapi.responses import StreamingResponse
 from typing import Dict, Any
 import logging
+import json
+import io
 
 from services.billing_service import BillingService
 from utils.logging_config import log_billing_flow_start, log_billing_flow_end
@@ -154,3 +157,107 @@ async def process_massive_billing_flow(
     except Exception as e:
         logger.error(f"Error en proceso masivo: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error en proceso masivo: {str(e)}")
+
+
+@router.post("/process-massive/download")
+async def process_massive_billing_flow_download(
+    country_id: int = Query(..., description="ID del país"),
+    company_id: str = Query(..., description="UUID de la empresa")
+):
+    """
+    Procesa el flujo masivo de facturación y descarga el resultado como archivo .txt
+
+    Args:
+        country_id: ID del país
+        company_id: UUID de la empresa
+
+    Returns:
+        StreamingResponse con el resultado del procesamiento para descarga
+    """
+    try:
+        logger.info("🚀 Iniciando proceso masivo de facturación (descarga)...")
+
+        billing_service = BillingService()
+        result = await billing_service.process_massive_billing_flow(country_id, company_id)
+
+        json_str = json.dumps(result, ensure_ascii=False, indent=2)
+        buffer = io.BytesIO(json_str.encode("utf-8"))
+        filename = f"massive_billing_{country_id}_{company_id}.txt"
+
+        logger.info("✅ Proceso masivo completado, preparando descarga...")
+
+        return StreamingResponse(
+            buffer,
+            media_type="text/plain; charset=utf-8",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+
+    except Exception as e:
+        logger.error(f"Error en proceso masivo (descarga): {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error en proceso masivo (descarga): {str(e)}")
+
+
+@router.post("/process-massive/download-phase3")
+async def process_massive_billing_flow_download_phase3(
+    country_id: int = Query(..., description="ID del país"),
+    company_id: str = Query(..., description="UUID de la empresa")
+):
+    """
+    Procesa el flujo masivo de facturación y descarga solo los resultados de la fase 3.
+
+    Args:
+        country_id: ID del país
+        company_id: UUID de la empresa
+
+    Returns:
+        StreamingResponse con una lista de third_api_result por orden
+    """
+    try:
+        logger.info("🚀 Iniciando proceso masivo (descarga fase 3)...")
+
+        billing_service = BillingService()
+        result = await billing_service.process_massive_billing_flow(country_id, company_id)
+
+        third_results = [
+            {
+                "order_index": item.get("order_index"),
+                "third_api_result": item.get("third_api_result")
+            }
+            for item in result.get("results", [])
+        ]
+
+        filtered_payload = {
+            "success": result.get("success"),
+            "message": result.get("message"),
+            "country_id": result.get("country_id"),
+            "company_id": result.get("company_id"),
+            "processing_time_seconds": result.get("processing_time_seconds"),
+            "processing_time_minutes": (
+                result.get("processing_time_seconds", 0) / 60.0
+                if isinstance(result.get("processing_time_seconds"), (int, float))
+                else None
+            ),
+            "total_orders": result.get("total_orders"),
+            "failed_orders": result.get("failed_orders"),
+            "third_api_results": third_results
+        }
+
+        json_str = json.dumps(filtered_payload, ensure_ascii=False, indent=2)
+        buffer = io.BytesIO(json_str.encode("utf-8"))
+        filename = f"massive_billing_phase3_{country_id}_{company_id}.txt"
+
+        logger.info("✅ Proceso masivo (fase 3) completado, preparando descarga...")
+
+        return StreamingResponse(
+            buffer,
+            media_type="text/plain; charset=utf-8",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}"
+            }
+        )
+
+    except Exception as e:
+        logger.error(f"Error en proceso masivo (descarga fase 3): {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error en proceso masivo (descarga fase 3): {str(e)}")
